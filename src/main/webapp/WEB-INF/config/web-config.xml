@@ -1,0 +1,37 @@
+<!DOCTYPE aspectran PUBLIC "-//ASPECTRAN//DTD Aspectran Configuration 5.0//EN"
+                           "http://aspectran.github.io/dtd/aspectran-5.dtd">
+
+<aspectran>
+
+    <description>
+        An Aspectran configuration for Web Application Service.
+        Note that the name of the Translet corresponding to the request URI always starts with a forward slash (/).
+    </description>
+
+    <bean id="jspViewDispatcher" class="com.aspectran.web.support.view.JspViewDispatcher">
+        <description>
+            Register a JSP View Dispatcher.
+        </description>
+        <properties>
+            <item name="prefix">/WEB-INF/jsp/</item>
+            <item name="suffix">.jsp</item>
+        </properties>
+    </bean>
+
+    <aspect id="transletSettings">
+        <description>
+            Specifies the environment variables used during request and response processing.
+        </description>
+        <joinpoint target="translet"/>
+        <settings>
+            <setting name="characterEncoding" value="utf-8"/>
+            <setting name="contentEncoding" value="gzip"/>
+            <setting name="viewDispatcher" value="jspViewDispatcher"/>
+        </settings>
+    </aspect>
+
+    <append file="/WEB-INF/config/translets/main.xml"/>
+    <append file="/WEB-INF/config/translets/hello-world.xml"/>
+    <append file="/WEB-INF/config/translets/gs-rest-service.xml"/>
+
+</aspectran>

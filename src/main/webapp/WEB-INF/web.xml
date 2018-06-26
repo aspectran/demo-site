@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
+    <display-name>gae-demo</display-name>
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+    <context-param>
+        <param-name>aspectran:config</param-name>
+        <param-value>
+            context: {
+                root: /WEB-INF/config/root-config.xml
+                encoding: utf-8
+                resources: [
+                ]
+                hybridLoad: false
+                autoReload: {
+                    reloadMode: hard
+                    scanIntervalSeconds: 5
+                    startup: false
+                }
+                profiles: {
+                }
+            }
+            scheduler: {
+                startDelaySeconds: 10
+                waitOnShutdown: true
+                startup: false
+            }
+            web: {
+                uriDecoding: utf-8
+            }
+        </param-value>
+    </context-param>
+    <listener>
+        <listener-class>com.aspectran.web.startup.listener.AspectranServiceListener</listener-class>
+    </listener>
+    <servlet>
+        <servlet-name>web-activity-servlet</servlet-name>
+        <servlet-class>com.aspectran.web.startup.servlet.WebActivityServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>web-activity-servlet</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+    <!--
+        Note: In the actual operating environment, remove the servlet mapping
+        so that the job of the scheduler can not be accessed directly.
+    -->
+    <servlet-mapping>
+        <servlet-name>web-activity-servlet</servlet-name>
+        <url-pattern>/scheduler/*</url-pattern>
+    </servlet-mapping>
+</web-app>
