@@ -32,6 +32,6 @@
         </description>
     </bean>
 
-	<append file="/WEB-INF/config/web-config.xml"/>
+    <append file="/WEB-INF/config/web-config.xml"/>
 
 </aspectran>
