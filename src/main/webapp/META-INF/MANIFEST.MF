@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
 Built-By: Aspectran
-Build-Jdk: 1.8.0_91
-Created-By: Maven Integration for Eclipse
+Created-By: IntelliJ IDEA
+Build-Jdk: 10.0.1
 
