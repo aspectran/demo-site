@@ -30,8 +30,8 @@
         </settings>
     </aspect>
 
-    <append file="/WEB-INF/config/translets/main.xml"/>
-    <append file="/WEB-INF/config/translets/hello-world.xml"/>
-    <append file="/WEB-INF/config/translets/gs-rest-service.xml"/>
+    <append file="/WEB-INF/config/pages/main.xml"/>
+    <append file="/WEB-INF/config/examples/hello-world.xml"/>
+    <append file="/WEB-INF/config/examples/gs-rest-service.xml"/>
 
 </aspectran>
