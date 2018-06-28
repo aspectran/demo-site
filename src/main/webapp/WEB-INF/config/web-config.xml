@@ -30,7 +30,7 @@
         </settings>
     </aspect>
 
-    <append file="/WEB-INF/config/pages/main.xml"/>
+    <append file="/WEB-INF/config/front/main.xml"/>
     <append file="/WEB-INF/config/examples/hello-world.xml"/>
     <append file="/WEB-INF/config/examples/gs-rest-service.xml"/>
 

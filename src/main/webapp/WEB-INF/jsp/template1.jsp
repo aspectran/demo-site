@@ -68,12 +68,25 @@
             </div>
             <div class="top-bar-left">
                 <ul class="dropdown menu" data-dropdown-menu data-close-on-click-inside="false">
-                    <li class="active">
+                    <li>
                         <a href="/">Examples</a>
                         <ul class="menu" data-submenu data-close-on-click-inside="false">
                             <li><a href="/examples/hello-world">Hello World</a></li>
                             <li><a href="/examples/gs-rest-service/">RESTful Web Service</a></li>
+                            <li><a href="/examples/file-upload/">File Upload</a></li>
                         </ul>
+                    </li>
+                    <li>
+                        <a href="/">Modules</a>
+                        <ul class="menu" data-submenu data-close-on-click-inside="false">
+                            <li><a href="/modules/webeditor">Web Editor</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="/guestbook">Guestbook</a>
+                    </li>
+                    <li>
+                        <a href="/terminal">Terminal</a>
                     </li>
                 </ul>
             </div>
