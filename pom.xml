@@ -64,13 +64,13 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.tomcat.maven</groupId>
-                <artifactId>tomcat7-maven-plugin</artifactId>
-                <version>2.2</version>
+                <groupId>com.google.appengine</groupId>
+                <artifactId>appengine-maven-plugin</artifactId>
+                <version>1.9.64</version>
                 <configuration>
-                    <url>http://backend.aspectran.com/manager/text</url>
-                    <server>backend-tomcat-server</server>
-                    <path>/gs-quick-start</path>
+                    <enableJarClasses>false</enableJarClasses>
+                    <port>8081</port>
+                    <address>0.0.0.0</address>
                 </configuration>
             </plugin>
         </plugins>
