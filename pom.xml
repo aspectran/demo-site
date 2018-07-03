@@ -13,7 +13,15 @@
         </contributor>
     </contributors>
     <properties>
+        <main.basedir>${project.basedir}</main.basedir>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.testTarget>1.8</maven.compiler.testTarget>
+        <maven.compiler.testSource>1.8</maven.compiler.testSource>
+        <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ssZ</maven.build.timestamp.format>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
     <build>
         <outputDirectory>src/main/webapp/WEB-INF/classes</outputDirectory>
