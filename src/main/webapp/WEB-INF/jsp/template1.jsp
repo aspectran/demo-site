@@ -184,16 +184,16 @@
                 <h5>Navigation</h5>
                 <ul class="no-bullet">
                     <li class="">
-                        <a href="/getting-started/" title="">Getting-Started</a>
+                        <a href="http://www.aspectran.com/getting-started/" title="">Getting-Started</a>
                     </li>
                     <li class="">
-                        <a href="/docs/" title="">Documentation</a>
+                        <a href="http://www.aspectran.com/docs/" title="">Documentation</a>
                     </li>
                     <li class="" >
-                        <a href="/guides/" title="">Guides</a>
+                        <a href="http://www.aspectran.com/guides/" title="">Guides</a>
                     </li>
                     <li class="" >
-                        <a href="/projects/" title="">Projects</a>
+                        <a href="http://www.aspectran.com/projects/" title="">Projects</a>
                     </li>
                 </ul>
             </div>
