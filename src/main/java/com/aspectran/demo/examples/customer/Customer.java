@@ -50,7 +50,6 @@ public class Customer extends AbstractParameters {
      */
     public Customer() {
         super(parameterDefinitions);
-        setIndentString("  ");
     }
     
 }
