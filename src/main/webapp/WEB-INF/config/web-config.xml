@@ -18,6 +18,17 @@
         </properties>
     </bean>
 
+    <bean id="multipartFormDataParser" class="com.aspectran.web.support.multipart.commons.CommonsMultipartFormDataParserFactoryBean">
+        <description>
+            Required to handle multi-part form data.
+        </description>
+        <properties>
+            <item name="maxRequestSize" value="10M"/>
+            <item name="maxFileSize" value="7M"/>
+            <item name="allowedFileExtensions" value="jpg,png,gif,bmp"/>
+        </properties>
+    </bean>
+
     <aspect id="transletSettings">
         <description>
             Specifies the environment variables used during request and response processing.
@@ -27,6 +38,7 @@
             <setting name="characterEncoding" value="utf-8"/>
             <setting name="contentEncoding" value="gzip"/>
             <setting name="viewDispatcher" value="jspViewDispatcher"/>
+            <setting name="multipartFormDataParser" value="multipartFormDataParser"/>
             <setting name="indentString" value="  "/>
         </settings>
     </aspect>
@@ -34,5 +46,6 @@
     <append file="/WEB-INF/config/front/main.xml"/>
     <append file="/WEB-INF/config/examples/hello-world.xml"/>
     <append file="/WEB-INF/config/examples/gs-rest-service.xml"/>
+    <append file="/WEB-INF/config/examples/file-upload.xml"/>
 
 </aspectran>

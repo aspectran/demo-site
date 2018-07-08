@@ -1,0 +1,18 @@
+<!DOCTYPE aspectran PUBLIC "-//ASPECTRAN//DTD Aspectran Configuration 5.0//EN"
+                           "http://aspectran.github.io/dtd/aspectran-5.dtd">
+
+<aspectran>
+
+    <translet name="/examples/file-upload">
+        <dispatch name="templates/default">
+            <echo id="page">
+                <attributes>
+                    <item name="headline">Uploading Files</item>
+                    <item name="teaser">This guide walks you through the process of creating a server application that can receive HTTP multi-part file uploads.</item>
+                    <item name="include">examples/file-upload</item>
+                </attributes>
+            </echo>
+        </dispatch>
+    </translet>
+
+</aspectran>
