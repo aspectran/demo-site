@@ -44,7 +44,7 @@
             }
         ])
 
-        .controller('DemoFileUploadController', [
+        .controller('DemoFileUploadController', [666666666666666666666
             '$scope', '$http', '$filter', '$window',
             function ($scope, $http) {
                 $scope.options = {

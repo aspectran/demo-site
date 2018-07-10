@@ -7,7 +7,11 @@
         <setting name="transletNamePattern" value="/examples/file-upload/*"/>
     </settings>
 
-    <bean class="com.aspectran.demo.examples.upload.SimpleFileUploadAction"/>
+    <bean class="com.aspectran.demo.examples.upload.SimpleFileUploadAction">
+        <properties>
+            <item name="maxFiles" valueType="int">10</item>
+        </properties>
+    </bean>
 
     <translet name="/">
         <dispatch name="templates/default">

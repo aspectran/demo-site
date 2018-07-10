@@ -18,13 +18,13 @@
         </properties>
     </bean>
 
-    <bean id="multipartFormDataParser" class="com.aspectran.web.support.multipart.commons.CommonsMultipartFormDataParserFactoryBean">
+    <bean id="multipartFormDataParser" class="com.aspectran.web.support.multipart.inmemory.MemoryMultipartFormDataParserFactoryBean">
         <description>
             Required to handle multi-part form data.
         </description>
         <properties>
-            <item name="maxRequestSize" value="10M"/>
-            <item name="maxFileSize" value="7M"/>
+            <item name="maxRequestSize" value="2M"/>
+            <item name="maxFileSize" value="1M"/>
             <item name="allowedFileExtensions" value="jpg,png,gif,bmp"/>
         </properties>
     </bean>

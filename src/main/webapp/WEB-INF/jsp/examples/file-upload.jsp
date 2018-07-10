@@ -78,7 +78,7 @@
   $(function () {
     'use strict';
     // Change this to the location of your server-side upload handler:
-    var url = '/examples/upload/file';
+    var url = '/examples/file-upload/files';
     var uploadButton = $('<button/>')
           .attr("type", "button")
           .addClass('button success')
@@ -146,6 +146,7 @@
           progress + '%'
       );
     }).on('fileuploaddone', function (e, data) {
+        console.log(data.result);
       $.each(data.result.files, function (index, file) {
           if (file.url) {
               var link = $('<a>')
