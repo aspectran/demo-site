@@ -18,18 +18,7 @@
         </properties>
     </bean>
 
-    <bean id="multipartFormDataParser" class="com.aspectran.web.support.multipart.inmemory.MemoryMultipartFormDataParserFactoryBean">
-        <description>
-            Required to handle multi-part form data.
-        </description>
-        <properties>
-            <item name="maxRequestSize" value="2M"/>
-            <item name="maxFileSize" value="1M"/>
-            <item name="allowedFileExtensions" value="jpg,png,gif,bmp"/>
-        </properties>
-    </bean>
-
-    <aspect id="transletSettings">
+    <aspect id="webTransletSettings">
         <description>
             Specifies the environment variables used during request and response processing.
         </description>
@@ -38,7 +27,6 @@
             <setting name="characterEncoding" value="utf-8"/>
             <setting name="contentEncoding" value="gzip"/>
             <setting name="viewDispatcher" value="jspViewDispatcher"/>
-            <setting name="multipartFormDataParser" value="multipartFormDataParser"/>
             <setting name="indentString" value="  "/>
         </settings>
     </aspect>
