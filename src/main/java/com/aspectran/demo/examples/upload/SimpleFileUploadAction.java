@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -34,7 +33,7 @@ public class SimpleFileUploadAction {
 
     private Log log = LogFactory.getLog(SimpleFileUploadAction.class);
 
-    private Map<String, UploadedFile> uploadedFiles = new LinkedHashMap<>();
+    private final Map<String, UploadedFile> uploadedFiles = new LinkedHashMap<>();
 
     private int maxFiles = 30;
 
@@ -71,7 +70,7 @@ public class SimpleFileUploadAction {
     @Action(id = "files")
     public Collection upload(Translet translet) throws IOException {
         if (!translet.getRequestAdapter().isMaxLengthExceeded()) {
-            FileParameter fileParameter = translet.getFileParameter("files[]");
+            FileParameter fileParameter = translet.getFileParameter("file");
             if (fileParameter != null) {
                 String key = UUID.randomUUID().toString();
                 String ext = FilenameUtils.getExtension(fileParameter.getFileName());

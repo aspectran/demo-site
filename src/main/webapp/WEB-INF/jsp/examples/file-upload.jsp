@@ -6,13 +6,35 @@
   #files li {
     display: inline-block;
     width: 340px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    position: relative;
+  }
+  #files li:hover {
+    border: 1px solid #aaa;
   }
   #files li canvas {
     float: left;
   }
+  #files li canvas.link:hover {
+    cursor: pointer;
+  }
   #files li div {
     float: left;
     margin-left: 10px;
+  }
+  #files li div p {
+    margin: 0;
+  }
+  #files li button.delete {
+    border: 0;
+    background: red;
+    color: #fff;
+    padding: 6px 8px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-radius: 0 0 0 4px;
   }
 </style>
 <div class="t50 b20">
@@ -27,7 +49,7 @@
     <!-- Redirect browsers with JavaScript disabled to the origin page -->
     <noscript><input type="hidden" name="redirect" value="https://blueimp.github.io/jQuery-File-Upload/"></noscript>
     <label for="fileAdds" class="button fileinput-button">Add files...</label>
-    <input type="file" name="files[]" id="fileAdds" class="show-for-sr" multiple>
+    <input type="file" name="file" id="fileAdds" class="show-for-sr" multiple>
     <div id="progress" class="success progress">
       <div class="progress-meter"></div>
     </div>
@@ -40,20 +62,18 @@
     </div>
     <div class="panel-body">
       <ul>
-        <li>The maximum file size for uploads in this demo is <strong>999 KB</strong> (default file size is unlimited).</li>
-        <li>Only image files (<strong>JPG, GIF, PNG</strong>) are allowed in this demo (by default there is no file type restriction).</li>
-        <li>Uploaded files will be deleted automatically after <strong>5 minutes or less</strong> (demo files are stored in memory).</li>
+        <li>The maximum file size for uploads in this demo is <strong>3MB</strong>.</li>
+        <li>Only image files (<strong>JPG, GIF, PNG</strong>) are allowed in this demo.</li>
+        <li>Up to 30 files will be stored in the memory, and older files will be deleted.</li>
         <li>You can <strong>drag &amp; drop</strong> files from your desktop on this webpage (see <a href="https://github.com/blueimp/jQuery-File-Upload/wiki/Browser-support">Browser support</a>).</li>
-        <li>Please refer to the <a href="https://github.com/blueimp/jQuery-File-Upload">project website</a> and <a href="https://github.com/blueimp/jQuery-File-Upload/wiki">documentation</a> for more information.</li>
-        <li>Built with the <a href="http://getbootstrap.com/">Bootstrap</a> CSS framework and Icons from <a href="http://glyphicons.com/">Glyphicons</a>.</li>
+        <li>Please refer to the <a href="https://github.com/blueimp/jQuery-File-Upload">project website</a> and <a href="https://github.com/blueimp/jQuery-File-Upload/wiki">documentation</a> for more information about jQuery File Upload Plugin.</li>
+        <li>Built with the <a href="https://foundation.zurb.com/">Foundation</a> CSS framework.</li>
       </ul>
     </div>
   </div>
 </div>
 <!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
 <script src="/assets/js/vendor/jquery.ui.widget.js"></script>
-<!-- The Templates plugin is included to render the upload/download listings -->
-<script src="https://blueimp.github.io/JavaScript-Templates/js/tmpl.min.js"></script>
 <!-- The Load Image plugin is included for the preview images and image resizing functionality -->
 <script src="https://blueimp.github.io/JavaScript-Load-Image/js/load-image.all.min.js"></script>
 <!-- The Canvas to Blob plugin is included for image resizing functionality -->
@@ -73,43 +93,61 @@
 <!-- The File Upload validation plugin -->
 <script src="/assets/js/jquery.fileupload-validate.js"></script>
 <script>
-  /*jslint unparam: true, regexp: true */
-  /*global window, $ */
   $(function () {
     'use strict';
     // Change this to the location of your server-side upload handler:
     var url = '/examples/file-upload/files';
     var uploadButton = $('<button/>')
-          .attr("type", "button")
-          .addClass('button success')
-          .prop('disabled', true)
-          .text('Processing...')
-          .on('click', function () {
-              var $this = $(this),
-                  data = $this.data();
-              $this
-                  .off('click')
-                  .text('Abort')
-                  .on('click', function () {
-                      $this.remove();
-                      data.abort();
-                  });
-              data.submit().always(function () {
-                  $this.remove();
-              });
-              $("#progress").removeClass("alert").addClass("success");
-          });
+        .attr("type", "button")
+        .addClass('upload button success')
+        .prop('disabled', true)
+        .text('Processing...')
+        .on('click', function () {
+            var $this = $(this),
+                data = $this.data();
+            $this
+                .off('click')
+                .text('Abort')
+                .on('click', function () {
+                    $this.remove();
+                    data.abort();
+                });
+            data.submit().always(function () {
+                $this.remove();
+            });
+            $("#progress").removeClass("alert").addClass("success");
+        });
+    var deleteButton = $('<button/>')
+        .attr("type", "button")
+        .addClass('button delete')
+        .prop('disabled', true)
+        .text('X')
+        .on('click', function() {
+            var $this = $(this);
+            var fileKey = $this.data("file-key");
+            if(fileKey) {
+                $.ajax({
+                    url: url + "/" + fileKey,
+                    type: 'delete',
+                    success: function() {
+                        $this.parent().remove();
+                    }
+                });
+            } else {
+                $this.parent().remove();
+            }
+        });
+
     $('#fileupload').fileupload({
       url: url,
       dataType: 'json',
       autoUpload: false,
       acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
-      maxFileSize: 999000,
+      maxFileSize: 3000000,
       // Enable image resizing, except for Android and Opera,
       // which actually support image resizing, but fail to
       // send Blob objects via XHR requests:
-      disableImageResize: /Android(?!.*Chrome)|Opera/
-          .test(window.navigator.userAgent),
+      disableImageResize: /Android(?!.*Chrome)|Opera/.test(window.navigator.userAgent),
       previewMaxWidth: 100,
       previewMaxHeight: 100,
       previewCrop: true
@@ -117,9 +155,16 @@
       data.context = $('<li/>').appendTo($('#files ul'));
       $.each(data.files, function (index, file) {
           var node = $('<div/>')
-              .append($('<p/>').text(file.name));
+              .append($('<p/>').addClass('filename').text(file.name))
+              .append($('<p/>').text(humanFileSize(file.size, true)));
           if (!index) {
-              node.append(uploadButton.clone(true).data(data));
+              var uploadBtn = uploadButton.clone(true).data(data);
+              node.append(uploadBtn);
+              setTimeout(function() {
+                  uploadBtn.click();
+              }, 1000);
+              var deleteBtn = deleteButton.clone(true).data(data);
+              data.context.append(deleteBtn);
           }
           node.appendTo(data.context);
       });
@@ -131,12 +176,12 @@
           node.prepend(file.preview);
       }
       if (file.error) {
-          node.find("div")
-              .append($('<span class="label alert"/>').text(file.error));
+          node.find("div").append($('<span class="label alert"/>').text(file.error));
+          node.find("button.upload").hide();
       }
       if (index + 1 === data.files.length) {
-          data.context.find('button')
-              .text('Upload')
+          data.context.find('button.upload')
+              .text('Waiting...')
               .prop('disabled', !!data.files.error);
       }
     }).on('fileuploadprogressall', function (e, data) {
@@ -146,29 +191,49 @@
           progress + '%'
       );
     }).on('fileuploaddone', function (e, data) {
-        console.log(data.result);
       $.each(data.result.files, function (index, file) {
           if (file.url) {
+              $(data.context[index]).find("canvas")
+                  .addClass("link")
+                  .click(function() {
+                    window.open(file.url);
+                  });
               var link = $('<a>')
                   .attr('target', '_blank')
                   .prop('href', file.url);
-              $(data.context[index])
-                  .wrap(link);
+              $(data.context[index]).find("p.filename").wrap(link);
+              $(data.context[index]).find("button.delete")
+                  .data("file-key", file.key).prop("disabled", false);
           } else if (file.error) {
               var error = $('<span class="label alert"/>').text(file.error);
-              $(data.context[index]).find("div")
-                  .append(error);
+              $(data.context[index]).find("div").append(error);
           }
       });
     }).on('fileuploadfail', function (e, data) {
       $.each(data.files, function (index) {
-            var error = $('<span class="label alert"/>').text('File upload failed.');
-            $(data.context[index]).find("div")
-                .append(error);
-        });
+          var error = $('<span class="label alert"/>').text('File upload failed.');
+          $(data.context[index]).find("div")
+              .append(error);
+      });
       $("#progress").removeClass("success").addClass("alert");
       $("#progress .progress-meter").css("width", "100%");
     }).prop('disabled', !$.support.fileInput)
         .parent().addClass($.support.fileInput ? undefined : 'disabled');
   });
+
+  function humanFileSize(bytes, si) {
+      var thresh = si ? 1000 : 1024;
+      if(Math.abs(bytes) < thresh) {
+          return bytes + ' B';
+      }
+      var units = si
+          ? ['kB','MB','GB','TB','PB','EB','ZB','YB']
+          : ['KiB','MiB','GiB','TiB','PiB','EiB','ZiB','YiB'];
+      var u = -1;
+      do {
+          bytes /= thresh;
+          ++u;
+      } while(Math.abs(bytes) >= thresh && u < units.length - 1);
+      return bytes.toFixed() + ' ' + units[u];
+  }
 </script>

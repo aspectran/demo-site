@@ -32,6 +32,12 @@
             }
             web: {
                 uriDecoding: utf-8
+                exposals: {
+                    +: /examples/**
+                    +: /modules/**
+                    +: /guestbook/**
+                    +: /termial/**
+                }
             }
         </param-value>
     </context-param>
