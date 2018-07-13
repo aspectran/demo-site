@@ -33,6 +33,7 @@
             web: {
                 uriDecoding: utf-8
                 exposals: {
+                    +: /
                     +: /examples/**
                     +: /modules/**
                     +: /guestbook/**

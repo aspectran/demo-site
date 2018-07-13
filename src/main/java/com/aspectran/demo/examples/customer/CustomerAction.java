@@ -96,7 +96,7 @@ public class CustomerAction {
         return true;
     }
 
-    public boolean approve(Translet translet) {
+    public boolean updateAttributes(Translet translet) {
         int id = Integer.parseInt(translet.getParameter("id"));
         boolean approved = Boolean.parseBoolean(translet.getParameter("approved"));
 
@@ -108,11 +108,6 @@ public class CustomerAction {
         }
 
         return true;
-    }
-    
-    public boolean isApproved(Translet translet) {
-        int id = Integer.parseInt(translet.getParameter("id"));
-        return dao.isApproved(id);
     }
 
 }
