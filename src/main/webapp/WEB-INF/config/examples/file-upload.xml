@@ -31,17 +31,18 @@
         <properties>
             <item name="maxRequestSize" value="6M"/>
             <item name="maxFileSize" value="5M"/>
-            <item name="allowedFileExtensions" value="jpg,jpeg,png,gif"/>
+            <item name="allowedFileExtensions" value="JPG,jpg,jpeg,png,gif"/>
         </properties>
     </bean>
 
     <bean class="com.aspectran.demo.examples.upload.SimpleFileUploadAction">
         <properties>
-            <item name="maxFiles" valueType="int">10</item>
+            <item name="maxFiles" valueType="int">12</item>
         </properties>
     </bean>
 
     <translet name="/">
+        <action id="files" bean="class:com.aspectran.demo.examples.upload.SimpleFileUploadAction" method="list"/>
         <dispatch name="templates/default">
             <echo id="page">
                 <attributes>

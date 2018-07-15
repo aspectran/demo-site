@@ -1,34 +1,49 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <style>
-  #files ul {
-    list-style-type: none;
+  .files {
+    padding: 20px;
+    background-color: #f5f5f5;
   }
-  #files li {
-    display: inline-block;
-    width: 340px;
+  .files ul {
+    list-style-type: none;
+    margin: 0;
+    overflow: auto;
+  }
+  .files li {
+    float: left;
+    width: 30%;
+    min-width: 300px;
+    height: 102px;
     margin-right: 10px;
+    margin-bottom: 10px;
     border: 1px solid #ccc;
     position: relative;
+    background-color: #fff;
   }
-  #files li:hover {
+  .files li:hover {
     border: 1px solid #aaa;
   }
-  #files li canvas {
-    float: left;
+  .files li canvas, .files li img {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+
   }
-  #files li canvas.link:hover {
+  .files li canvas.link:hover, .files li img.link:hover {
     cursor: pointer;
   }
-  #files li div {
-    float: left;
-    margin-left: 10px;
+  .files li div.info {
+    padding-left: 110px;
+    height: 100px;
+    overflow: auto;
   }
-  #files li div p {
+  .files li div.info p {
     margin: 0;
   }
-  #files li button.delete {
+  .files li button.delete {
     border: 0;
-    background: red;
+    background: #ffbeb2;
     color: #fff;
     padding: 6px 8px;
     position: absolute;
@@ -36,24 +51,26 @@
     right: 0;
     border-radius: 0 0 0 4px;
   }
+  .files li button.delete:hover {
+    background: indianred;
+  }
+  .files li div.progress {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 8px;
+    width: 100px;
+    margin: 0;
+  }
 </style>
 <div class="t50 b20">
-  <blockquote>
-    <p>File Upload widget with multiple file selection, drag&amp;drop support, progress bars, validation and preview images, audio and video for jQuery.<br>
-      Supports cross-domain, chunked and resumable file uploads and client-side image resizing.<br>
-      Works with any server-side platform (PHP, Python, Ruby on Rails, Java, Node.js, Go etc.) that supports standard HTML form file uploads.</p>
-  </blockquote>
-  <br>
-  <!-- The file upload form used as target for the file upload widget -->
   <form id="fileupload" action="https://jquery-file-upload.appspot.com/" method="POST" enctype="multipart/form-data">
-    <!-- Redirect browsers with JavaScript disabled to the origin page -->
-    <noscript><input type="hidden" name="redirect" value="https://blueimp.github.io/jQuery-File-Upload/"></noscript>
     <label for="fileAdds" class="button fileinput-button">Add files...</label>
     <input type="file" name="file" id="fileAdds" class="show-for-sr" multiple>
-    <div id="progress" class="success progress">
+    <div id="files" class="files">Drop files here to upload</div>
+    <div class="success progress" style="display: none">
       <div class="progress-meter"></div>
     </div>
-    <div id="files"><ul></ul></div>
   </form>
   <br>
   <div class="panel panel-default">
@@ -71,6 +88,20 @@
       </ul>
     </div>
   </div>
+</div>
+<h2>Recently Uploaded Files</h2>
+<div class="files">
+  <ul>
+  <c:forEach items="${files}" var="file">
+    <li>
+      <a href="${file.url}" target="_blank"><img src="${file.url}"/></a>
+      <div class="info">
+        <p><a href="${file.url}" target="_blank">${file.fileName}</a></p>
+        <p>${file.fileSize}</p>
+      </div>
+    </li>
+  </c:forEach>
+  </ul>
 </div>
 <!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
 <script src="/assets/js/vendor/jquery.ui.widget.js"></script>
@@ -130,7 +161,10 @@
                     url: url + "/" + fileKey,
                     type: 'delete',
                     success: function() {
-                        $this.parent().remove();
+                        $this.parent().fadeOut();
+                        setTimeout(function () {
+                            $this.parent().remove();
+                        }, 500)
                     }
                 });
             } else {
@@ -152,9 +186,12 @@
       previewMaxHeight: 100,
       previewCrop: true
     }).on('fileuploadadd', function (e, data) {
+        if ($('#files').find('ul').size() == 0) {
+            $('#files').html("<ul/>");
+        }
       data.context = $('<li/>').appendTo($('#files ul'));
       $.each(data.files, function (index, file) {
-          var node = $('<div/>')
+          var node = $('<div/>').addClass('info').hide()
               .append($('<p/>').addClass('filename').text(file.name))
               .append($('<p/>').text(humanFileSize(file.size, true)));
           if (!index) {
@@ -165,8 +202,9 @@
               }, 1000);
               var deleteBtn = deleteButton.clone(true).data(data);
               data.context.append(deleteBtn);
+              data.context.append($('.progress').clone().show());
           }
-          node.appendTo(data.context);
+          node.appendTo(data.context).show(200);
       });
     }).on('fileuploadprocessalways', function (e, data) {
       var index = data.index,
@@ -176,20 +214,22 @@
           node.prepend(file.preview);
       }
       if (file.error) {
-          node.find("div").append($('<span class="label alert"/>').text(file.error));
+          node.find("div.info").append($('<span class="label alert"/>').text(file.error));
           node.find("button.upload").hide();
       }
       if (index + 1 === data.files.length) {
-          data.context.find('button.upload')
+          $(data.context[index]).find('button.upload')
               .text('Waiting...')
               .prop('disabled', !!data.files.error);
+          $(data.context[index]).find('.pregress').show();
       }
-    }).on('fileuploadprogressall', function (e, data) {
-      var progress = parseInt(data.loaded / data.total * 100, 10);
-      $('#progress .progress-meter').css(
-          'width',
-          progress + '%'
-      );
+    }).on('fileuploadprogress', function (e, data) {
+        var node = $(data.context);
+        var progress = parseInt(data.loaded / data.total * 100, 10);
+        node.find('.progress-meter').css(
+            'width',
+            progress + '%'
+        );
     }).on('fileuploaddone', function (e, data) {
       $.each(data.result.files, function (index, file) {
           if (file.url) {
@@ -206,17 +246,20 @@
                   .data("file-key", file.key).prop("disabled", false);
           } else if (file.error) {
               var error = $('<span class="label alert"/>').text(file.error);
-              $(data.context[index]).find("div").append(error);
+              $(data.context[index]).find('div.info').append(error);
           }
+          setTimeout(function () {
+              $(data.context[index]).find(".progress").fadeOut();
+          }, 700);
       });
     }).on('fileuploadfail', function (e, data) {
       $.each(data.files, function (index) {
           var error = $('<span class="label alert"/>').text('File upload failed.');
-          $(data.context[index]).find("div")
+          $(data.context[index]).find('div.info')
               .append(error);
       });
-      $("#progress").removeClass("success").addClass("alert");
-      $("#progress .progress-meter").css("width", "100%");
+        $(data.context[index]).find('.progress').removeClass('success').addClass('alert');
+        $(data.context[index]).find('.progress .progress-meter').css("width", "100%");
     }).prop('disabled', !$.support.fileInput)
         .parent().addClass($.support.fileInput ? undefined : 'disabled');
   });
