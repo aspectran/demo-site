@@ -41,6 +41,10 @@ public class SimpleFileUploadAction {
         this.maxFiles = maxFiles;
     }
 
+    public int getMaxFiles() {
+        return maxFiles;
+    }
+
     private void addUploadedFile(UploadedFile uploadedFile) {
         synchronized (uploadedFiles) {
             uploadedFiles.put(uploadedFile.getKey(), uploadedFile);

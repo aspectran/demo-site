@@ -23,6 +23,7 @@
   }
   .files li:hover {
     border: 1px solid #aaa;
+    box-shadow: 0 3px 4px 0 rgba(0,0,0,0.2),0 3px 3px -2px rgba(0,0,0,0.14),0 1px 8px 0 rgba(0,0,0,0.12);
   }
   .files li canvas, .files li img {
     position: absolute;
@@ -72,9 +73,6 @@
     <label for="fileAdds" class="button fileinput-button">Add files...</label>
     <input type="file" name="file" id="fileAdds" class="show-for-sr" multiple>
     <div id="files" class="files">Drop files here to upload</div>
-    <div class="success progress" style="display: none">
-      <div class="progress-meter"></div>
-    </div>
   </form>
   <br>
   <div class="panel panel-default">
@@ -174,7 +172,10 @@
                 $this.parent().remove();
             }
         });
-
+    var progressBar = $('<div/>')
+            .addClass('success progress')
+            .append($('<div/>')
+                .addClass('progress-meter'));
     $('#fileupload').fileupload({
       url: url,
       dataType: 'json',
@@ -188,22 +189,33 @@
       previewMaxWidth: 100,
       previewMaxHeight: 100,
       previewCrop: true
-    }).on('fileuploadadd', function (e, data) {
-        if ($('#files').find('ul').size() == 0) {
-            $('#files').html("<ul/>");
-        }
-      data.context = $('<li/>').appendTo($('#files ul'));
-      $.each(data.files, function (index, file) {
+    }).on('fileuploadadd', function(e, data) {
+      var ul = $('#files ul');
+      if (ul.size() == 0) {
+        ul = $('<ul/>');
+        $('#files').html(ul);
+      }
+      data.context = $('<li/>');
+      $.each(data.files, function(index, file) {
           var node = $('<div/>').addClass('info').hide()
               .append($('<p/>').addClass('filename').text(file.name))
               .append($('<p/>').text(humanFileSize(file.size, true)));
           if (!index) {
               node.append(uploadButton.clone(true).data(data));
               data.context.append(deleteButton.clone(true).data(data));
-              data.context.append($('.progress').clone().show());
+              data.context.append(progressBar.clone(true));
           }
-          node.appendTo(data.context).show(200);
+          node.appendTo(data.context).fadeIn();
       });
+      if (ul.find('li').size() >= ${page.maxFiles}) {
+          ul.find('li:eq(0)').fadeOut(400);
+          setTimeout(function() {
+              ul.find('li:eq(0)').remove();
+              data.context.appendTo(ul);
+          }, 400);
+      } else {
+          data.context.appendTo(ul);
+      }
     }).on('fileuploadprocessalways', function (e, data) {
       var index = data.index,
           file = data.files[index],
@@ -222,9 +234,7 @@
       }
       if (index + 1 === data.files.length) {
           $(data.context[index]).find('button.upload')
-              //.text('Waiting...')
               .prop('disabled', !!data.files.error);
-          $(data.context[index]).find('.pregress').show();
       }
     }).on('fileuploadprogress', function (e, data) {
         var node = $(data.context);
@@ -256,7 +266,7 @@
           }
           setTimeout(function () {
               $(data.context[index]).find(".progress").fadeOut();
-          }, 700);
+          }, 500);
       });
     }).on('fileuploadfail', function (e, data) {
       $.each(data.files, function (index) {
@@ -265,7 +275,7 @@
               .append(error);
       });
         $(data.context[index]).find('.progress').removeClass('success').addClass('alert');
-        $(data.context[index]).find('.progress .progress-meter').css("width", "100%");
+        $(data.context[index]).find('.progress-meter').css("width", "100%");
     }).prop('disabled', !$.support.fileInput)
         .parent().addClass($.support.fileInput ? undefined : 'disabled');
   });
