@@ -28,10 +28,14 @@
     position: absolute;
     width: 100px;
     height: 100px;
-
+    border-radius: 0;
   }
   .files li canvas.link:hover, .files li img.link:hover {
     cursor: pointer;
+  }
+  .files li img.blank {
+    background: #ccc url("http://www.aspectran.com/assets/img/aspectran-site-logo.png") no-repeat;
+    background-size: cover;
   }
   .files li div.info {
     padding-left: 110px;
@@ -43,7 +47,7 @@
   }
   .files li button.delete {
     border: 0;
-    background: #ffbeb2;
+    background-color: #ccc;
     color: #fff;
     padding: 6px 8px;
     position: absolute;
@@ -96,8 +100,8 @@
     <li>
       <a href="${file.url}" target="_blank"><img src="${file.url}"/></a>
       <div class="info">
-        <p><a href="${file.url}" target="_blank">${file.fileName}</a></p>
-        <p>${file.fileSize}</p>
+        <p><a href="${file.url}" download="${file.fileName}" target="_blank">${file.fileName}</a></p>
+        <p>${file.humanFileSize}</p>
       </div>
     </li>
   </c:forEach>
@@ -132,12 +136,11 @@
         .attr("type", "button")
         .addClass('upload button success')
         .prop('disabled', true)
-        .text('Processing...')
+        .text('Upload')
         .on('click', function () {
             var $this = $(this),
                 data = $this.data();
-            $this
-                .off('click')
+            $this.off('click')
                 .text('Abort')
                 .on('click', function () {
                     $this.remove();
@@ -175,7 +178,7 @@
     $('#fileupload').fileupload({
       url: url,
       dataType: 'json',
-      autoUpload: false,
+      autoUpload: true,
       acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
       maxFileSize: 3000000,
       // Enable image resizing, except for Android and Opera,
@@ -195,13 +198,8 @@
               .append($('<p/>').addClass('filename').text(file.name))
               .append($('<p/>').text(humanFileSize(file.size, true)));
           if (!index) {
-              var uploadBtn = uploadButton.clone(true).data(data);
-              node.append(uploadBtn);
-              setTimeout(function() {
-                  uploadBtn.click();
-              }, 1000);
-              var deleteBtn = deleteButton.clone(true).data(data);
-              data.context.append(deleteBtn);
+              node.append(uploadButton.clone(true).data(data));
+              data.context.append(deleteButton.clone(true).data(data));
               data.context.append($('.progress').clone().show());
           }
           node.appendTo(data.context).show(200);
@@ -212,14 +210,19 @@
           node = $(data.context[index]);
       if (file.preview) {
           node.prepend(file.preview);
+      } else {
+          node.prepend('<img class="blank"/>');
       }
       if (file.error) {
           node.find("div.info").append($('<span class="label alert"/>').text(file.error));
           node.find("button.upload").hide();
+          node.find("button.delete").prop('disabled', false);
+          node.find('.progress').fadeOut();
+          return;
       }
       if (index + 1 === data.files.length) {
           $(data.context[index]).find('button.upload')
-              .text('Waiting...')
+              //.text('Waiting...')
               .prop('disabled', !!data.files.error);
           $(data.context[index]).find('.pregress').show();
       }
@@ -239,11 +242,14 @@
                     window.open(file.url);
                   });
               var link = $('<a>')
+                  .attr('href', file.url)
                   .attr('target', '_blank')
-                  .prop('href', file.url);
+                  .attr('download', '');
               $(data.context[index]).find("p.filename").wrap(link);
+              $(data.context[index]).find("button.upload").remove();
               $(data.context[index]).find("button.delete")
-                  .data("file-key", file.key).prop("disabled", false);
+                  .data("file-key", file.key)
+                  .prop("disabled", false);
           } else if (file.error) {
               var error = $('<span class="label alert"/>').text(file.error);
               $(data.context[index]).find('div.info').append(error);

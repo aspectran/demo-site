@@ -31,7 +31,7 @@
         <properties>
             <item name="maxRequestSize" value="6M"/>
             <item name="maxFileSize" value="5M"/>
-            <item name="allowedFileExtensions" value="JPG,jpg,jpeg,png,gif"/>
+            <item name="allowedFileExtensions" value="jpg,jpeg,png,gif"/>
         </properties>
     </bean>
 
