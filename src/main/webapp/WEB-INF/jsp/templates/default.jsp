@@ -86,7 +86,7 @@
                         <a href="/guestbook">Guestbook</a>
                     </li>
                     <li>
-                        <a href="/terminal">Terminal</a>
+                        <a href="/terminal/translet-interpreter">Terminal</a>
                     </li>
                 </ul>
             </div>

@@ -37,7 +37,7 @@
                     +: /examples/**
                     +: /modules/**
                     +: /guestbook/**
-                    +: /termial/**
+                    +: /terminal/**
                 }
             }
         </param-value>
@@ -53,13 +53,5 @@
     <servlet-mapping>
         <servlet-name>web-activity-servlet</servlet-name>
         <url-pattern>/</url-pattern>
-    </servlet-mapping>
-    <!--
-        Note: In the actual operating environment, remove the servlet mapping
-        so that the job of the scheduler can not be accessed directly.
-    -->
-    <servlet-mapping>
-        <servlet-name>web-activity-servlet</servlet-name>
-        <url-pattern>/scheduler/*</url-pattern>
     </servlet-mapping>
 </web-app>
