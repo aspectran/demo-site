@@ -36,8 +36,8 @@
                     +: /
                     +: /examples/**
                     +: /modules/**
-                    +: /guestbook/**
-                    +: /terminal/**
+                    +: /guestbook**
+                    +: /terminal**
                 }
             }
         </param-value>

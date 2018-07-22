@@ -11,7 +11,7 @@
         <setting name="transletNamePattern" value="/terminal/*"/>
     </settings>
 
-    <translet name="/translet-interpreter">
+    <translet name="/">
         <dispatch name="templates/default">
             <echo id="page">
                 <attributes>
