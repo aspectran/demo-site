@@ -11,6 +11,8 @@
         <setting name="transletNamePattern" value="/terminal/*"/>
     </settings>
 
+    <bean id="transletInterpreter" class="com.aspectran.demo.terminal.TransletInterpreter"/>
+
     <translet name="/">
         <dispatch name="templates/default">
             <echo id="page">
@@ -21,6 +23,20 @@
                 </attributes>
             </echo>
         </dispatch>
+    </translet>
+
+    <translet name="/hello">
+        <request>
+            <parameters>
+                <item name="param1" mandatory="true"/>
+                <item name="param2" mandatory="true"/>
+            </parameters>
+        </request>
+        <transform type="transform/text">
+            <template style="apon">
+                |World
+            </template>
+        </transform>
     </translet>
 
 </aspectran>

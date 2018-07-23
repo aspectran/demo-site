@@ -4,19 +4,17 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/1.19.0/js/jquery.terminal.min.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/1.19.0/css/jquery.terminal.min.css" rel="stylesheet"/>
 <script>
-    jQuery(function($, undefined) {
-        $('#term_demo').terminal(function(command) {
-            if (command !== '') {
-                var result = window.eval(command);
-                if (result != undefined) {
-                    this.echo(String(result));
-                }
-            }
+    $(function() {
+        $('#term_demo').terminal(function(command, term) {
+            term.pause();
+            $.post('/terminal/exec', {translet: command}).then(function(response) {
+                term.echo(response).resume();
+            });
         }, {
             greetings: 'Translet Interpreter',
             name: 'js_demo',
             height: 500,
-            width: "90%",
+            width: "100%",
             prompt: 'js> '
         });
     });
