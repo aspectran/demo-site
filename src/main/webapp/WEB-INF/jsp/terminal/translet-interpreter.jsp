@@ -5,17 +5,27 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/1.19.0/css/jquery.terminal.min.css" rel="stylesheet"/>
 <script>
     $(function() {
+        var context = {};
         $('#term_demo').terminal(function(command, term) {
-            term.pause();
-            $.post('/terminal/exec', {translet: command}).then(function(response) {
-                term.echo(response).resume();
-            });
+            if (command !== '') {
+                try {
+                    term.pause();
+                    $.post('/terminal/exec', {translet: command}).then(function (response) {
+                        term.echo(response);
+                        term.resume();
+                    });
+                } catch (e) {
+                    term.error(String(e));
+                }
+            } else {
+                term.echo('');
+            }
         }, {
             greetings: 'Translet Interpreter',
-            name: 'js_demo',
+            name: 'transletInterpreter',
             height: 500,
             width: "100%",
-            prompt: 'js> '
+            prompt: 'aspectran> '
         });
     });
 </script>

@@ -13,6 +13,7 @@ import com.aspectran.core.context.rule.ItemRule;
 import com.aspectran.core.context.rule.ItemRuleMap;
 import com.aspectran.core.context.rule.TransletRule;
 import com.aspectran.core.context.rule.type.TransformType;
+import com.aspectran.core.util.StringUtils;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -25,6 +26,8 @@ import java.util.Map;
 @Configuration(namespace = "/terminal")
 public class TransletInterpreter implements ActivityContextAware {
 
+    private static final String COMMAND_PREFIX = "/terminal/";
+
     private ActivityContext context;
 
     @Override
@@ -36,8 +39,13 @@ public class TransletInterpreter implements ActivityContextAware {
     @Transform(type = TransformType.TEXT)
     public void execute(Translet translet) throws IOException, InvocationTargetException {
         String transletName = translet.getParameter("translet");
+        if (StringUtils.isEmpty(transletName)) {
+            return;
+        }
 
-        TransletRule transletRule = context.getTransletRuleRegistry().getTransletRule(transletName);
+        String transletFullName = COMMAND_PREFIX + transletName;
+
+        TransletRule transletRule = context.getTransletRuleRegistry().getTransletRule(transletFullName);
         if (transletRule == null) {
             throw new TransletNotFoundException(transletName);
         }
