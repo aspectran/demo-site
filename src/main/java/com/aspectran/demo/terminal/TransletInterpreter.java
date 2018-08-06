@@ -2,7 +2,6 @@ package com.aspectran.demo.terminal;
 
 import com.aspectran.core.activity.Activity;
 import com.aspectran.core.activity.Translet;
-import com.aspectran.core.activity.response.transform.json.ContentsJsonWriter;
 import com.aspectran.core.component.bean.annotation.Configuration;
 import com.aspectran.core.component.bean.annotation.Request;
 import com.aspectran.core.component.bean.annotation.Transform;
@@ -14,6 +13,7 @@ import com.aspectran.core.context.rule.ItemRuleMap;
 import com.aspectran.core.context.rule.TransletRule;
 import com.aspectran.core.context.rule.type.TransformType;
 import com.aspectran.core.util.StringUtils;
+import com.aspectran.core.util.json.JsonWriter;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -36,9 +36,10 @@ public class TransletInterpreter implements ActivityContextAware {
     }
 
     @Request(translet = "/exec")
-    @Transform(type = TransformType.TEXT)
+    @Transform(type = TransformType.TEXT, contentType = "application/json")
     public void execute(Translet translet) throws IOException, InvocationTargetException {
-        String transletName = translet.getParameter("translet");
+        String transletName = translet.getParameter("_translet");
+        boolean force = Boolean.parseBoolean(translet.getParameter("_force"));
         if (StringUtils.isEmpty(transletName)) {
             return;
         }
@@ -55,22 +56,31 @@ public class TransletInterpreter implements ActivityContextAware {
 
         Writer writer = translet.getResponseAdapter().getWriter();
 
-        if (parameterItemRuleMap == null && attributeItemRuleMap == null) {
-            writer.write("result: ");
-            performActivity(transletRule);
-        } else {
-            writer.write("require: {");
+        writer.write("translet: ");
+        new JsonWriter(writer).write(toMap(transletRule));
+
+        writer.write(", request: {");
+        if (parameterItemRuleMap != null) {
+            writer.write("parameters: ");
+            new JsonWriter(writer).write(toList(parameterItemRuleMap));
+        }
+        if (attributeItemRuleMap != null) {
             if (parameterItemRuleMap != null) {
-                writer.write("parameters: ");
-                ContentsJsonWriter jsonWriter = new ContentsJsonWriter(writer);
-                jsonWriter.write(toList(parameterItemRuleMap));
+                writer.write(", ");
             }
-            if (attributeItemRuleMap != null) {
-                writer.write("attributes: ");
-                ContentsJsonWriter jsonWriter = new ContentsJsonWriter(writer);
-                jsonWriter.write(toList(attributeItemRuleMap));
-            }
-            writer.write("}");
+            writer.write("attributes: ");
+            new JsonWriter(writer).write(toList(attributeItemRuleMap));
+        }
+        writer.write("}");
+
+        writer.write(", contentType: ");
+        writer.write("\"");
+        writer.write(transletRule.getResponseRule().getResponse().getContentType());
+        writer.write("\"");
+
+        if (force || (parameterItemRuleMap == null && attributeItemRuleMap == null)) {
+            writer.write(", response: ");
+            performActivity(transletRule);
         }
     }
 
@@ -78,6 +88,13 @@ public class TransletInterpreter implements ActivityContextAware {
         Activity activity = context.getCurrentActivity().newActivity();
         activity.prepare(transletRule);
         activity.perform();
+    }
+
+    private Map<String, String> toMap(TransletRule transletRule) {
+        Map<String, String> map = new LinkedHashMap<>();
+        map.put("name", transletRule.getName());
+        map.put("description", transletRule.getDescription());
+        return map;
     }
 
     private List<Map<String, Object>> toList(ItemRuleMap itemRuleMap) {
