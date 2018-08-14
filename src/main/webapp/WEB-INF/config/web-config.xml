@@ -31,6 +31,71 @@
         </settings>
     </aspect>
 
+    <bean id="corsProcessor" class="com.aspectran.web.support.cors.DefaultCorsProcessor">
+        <properties>
+            <item name="allowedOrigins" type="set">
+                <value>http://demo.aspectran.com</value>
+                <value>http://www.aspectran.com</value>
+            </item>
+            <item name="allowedMethods" type="set">
+                <value>GET</value>
+                <value>POST</value>
+                <value>PATCH</value>
+                <value>PUT</value>
+                <value>DELETE</value>
+                <value>HEAD</value>
+                <value>OPTIONS</value>
+            </item>
+            <item name="maxAgeSeconds" value="360" valueType="int"/>
+            <item name="exposedHeaders" value="Location"/>
+        </properties>
+    </bean>
+
+    <aspect id="corsProcessorAspect">
+        <joinpoint target="translet">
+            methods: [
+                GET
+                POST
+                PATCH
+                PUT
+                DELETE
+            ]
+            headers: [
+                Origin
+            ]
+            pointcut: {
+                +: /**
+            }
+        </joinpoint>
+        <advice bean="corsProcessor">
+            <before>
+                <action method="processActualRequest"/>
+            </before>
+        </advice>
+        <exception>
+            <thrown type="com.aspectran.web.support.cors.CorsException">
+                <transform type="transform/text">
+                    <template engine="token">
+                        @{CORS.HTTP_STATUS_CODE}: @{CORS.HTTP_STATUS_TEXT}
+                    </template>
+                </transform>
+            </thrown>
+        </exception>
+    </aspect>
+
+    <translet name="/**" method="OPTIONS">
+        <action bean="corsProcessor" method="processPreflightRequest"/>
+        <exception>
+            <thrown type="com.aspectran.web.support.cors.CorsException">
+                <transform type="transform/text">
+                    <template engine="token">
+                        @{CORS.HTTP_STATUS_CODE}: @{CORS.HTTP_STATUS_TEXT}
+                    </template>
+                </transform>
+            </thrown>
+        </exception>
+    </translet>
+
     <append file="/WEB-INF/config/front/main.xml"/>
     <append file="/WEB-INF/config/examples/hello-world.xml"/>
     <append file="/WEB-INF/config/examples/gs-rest-service.xml"/>
