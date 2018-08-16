@@ -56,32 +56,35 @@ public class TransletInterpreter implements ActivityContextAware {
 
         Writer writer = translet.getResponseAdapter().getWriter();
 
-        writer.write("translet: ");
+        writer.write("{");
+        writer.write("\"translet\": ");
         new JsonWriter(writer).write(toMap(transletRule));
 
-        writer.write(", request: {");
+        writer.write(", \"request\": {");
         if (parameterItemRuleMap != null) {
-            writer.write("parameters: ");
+            writer.write("\"parameters\": ");
             new JsonWriter(writer).write(toList(parameterItemRuleMap));
         }
         if (attributeItemRuleMap != null) {
             if (parameterItemRuleMap != null) {
                 writer.write(", ");
             }
-            writer.write("attributes: ");
+            writer.write("\"attributes\": ");
             new JsonWriter(writer).write(toList(attributeItemRuleMap));
         }
         writer.write("}");
 
-        writer.write(", contentType: ");
+        writer.write(", \"contentType\": ");
         writer.write("\"");
         writer.write(transletRule.getResponseRule().getResponse().getContentType());
         writer.write("\"");
 
         if (force || (parameterItemRuleMap == null && attributeItemRuleMap == null)) {
-            writer.write(", response: ");
+            writer.write(", \"response\": ");
             performActivity(transletRule);
         }
+
+        writer.write("}");
     }
 
     private void performActivity(TransletRule transletRule) {
