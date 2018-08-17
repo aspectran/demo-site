@@ -4,18 +4,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/1.19.1/js/jquery.terminal.min.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/1.19.1/css/jquery.terminal.min.css" rel="stylesheet"/>
 <script>
-    var a = {
-        translet: {"name":"/terminal/hello","description":null},
-        request: {
-            parameters: [
-                {"type":"single","name":"param1","value":"","defaultValue":null,"mandatory":true,"security":false},
-                {"type":"single","name":"param2","value":"","defaultValue":null,"mandatory":true,"security":false}
-            ]
-        },
-        contentType: "text/plain"
-    };
     $(function() {
-        var context = {};
         $('#term_demo').terminal(function(command, term) {
             if (command !== '') {
                 try {
@@ -36,19 +25,15 @@
                                 var request = data.request;
                                 if (request) {
                                     var params = request.parameters;
-                                    if (params) {
+                                    if (params && params.length > 0) {
                                         term.echo("Required parameters:");
-                                        for (var p in params) {
-                                            var param = params[p];
-                                            term.push(function (command, term) {
-                                                term.echo(param.name);
-                                                term.pop();
-                                            }, {
-                                                prompt: "  " + param.name + ": "
-                                            });
-                                        }
+                                        enterEachParameter(params, term);
                                     }
                                     var attrs = request.attributes;
+                                    if (attrs && attrs.length > 0) {
+                                        term.echo("Required attributes:");
+                                        enterEachParameter(attrs, term);
+                                    }
                                 }
                             }
                         }
@@ -67,4 +52,38 @@
             prompt: 'aspectran> '
         });
     });
+    function enterEachParameter(params, term) {
+        term.echo("Enter a value for each token:");
+        var missingParams = [];
+        var pp = 0;
+        for (var p = params.length - 1; p >= 0; p--) {
+            term.push(function (value, term) {
+                var mandatory = params[pp].mandatory;
+                if (mandatory && value === '') {
+                    params[pp].missing = (params[pp].missing||0) + 1;
+                    missingParams.push(params[pp]);
+                } else {
+                    params[pp].value = value;
+                    params[pp].missing = 0;
+                }
+                pp++;
+                term.pop();
+
+                if (pp === params.length) {
+                    if (missingParams.length > 0) {
+                        if (missingParams[0].missing < 2) {
+                            term.echo("Missing required parameters.");
+                            enterEachParameter(missingParams, term);
+                        } else {
+                            term.echo("Missing required parameters:");
+
+                        }
+                    }
+                }
+            }, {
+                prompt: p + "  " + params[p].string + ": ",
+                maskChar: params[p].security ? '*' : false
+            });
+        }
+    }
 </script>

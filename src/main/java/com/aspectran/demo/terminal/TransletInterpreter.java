@@ -8,9 +8,11 @@ import com.aspectran.core.component.bean.annotation.Transform;
 import com.aspectran.core.component.bean.aware.ActivityContextAware;
 import com.aspectran.core.component.translet.TransletNotFoundException;
 import com.aspectran.core.context.ActivityContext;
+import com.aspectran.core.context.expr.token.Token;
 import com.aspectran.core.context.rule.ItemRule;
 import com.aspectran.core.context.rule.ItemRuleMap;
 import com.aspectran.core.context.rule.TransletRule;
+import com.aspectran.core.context.rule.type.TokenType;
 import com.aspectran.core.context.rule.type.TransformType;
 import com.aspectran.core.util.StringUtils;
 import com.aspectran.core.util.json.JsonWriter;
@@ -19,9 +21,12 @@ import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Configuration(namespace = "/terminal")
 public class TransletInterpreter implements ActivityContextAware {
@@ -102,7 +107,70 @@ public class TransletInterpreter implements ActivityContextAware {
 
     private List<Map<String, Object>> toList(ItemRuleMap itemRuleMap) {
         List<Map<String, Object>> list = new ArrayList<>();
-        for (ItemRule itemRule : itemRuleMap.values()) {
+        Collection<ItemRule> itemRuleList = itemRuleMap.values();
+        Map<Token, Set<ItemRule>> inputTokens = new LinkedHashMap<>();
+        for (ItemRule itemRule : itemRuleList) {
+            Token[] tokens = itemRule.getAllTokens();
+            if (tokens == null || tokens.length == 0) {
+                Token t = new Token(TokenType.PARAMETER, itemRule.getName());
+                tokens = new Token[] { t };
+            }
+            for (Token t1 : tokens) {
+                if (t1.getType() == TokenType.PARAMETER) {
+                    boolean exists = false;
+                    for (Token t2 : inputTokens.keySet()) {
+                        if (t2.equals(t1)) {
+                            exists = true;
+                            break;
+                        }
+                    }
+                    if (exists) {
+                        Set<ItemRule> rules = inputTokens.get(t1);
+                        rules.add(itemRule);
+                    } else {
+                        Set<ItemRule> rules = new LinkedHashSet<>();
+                        rules.add(itemRule);
+                        inputTokens.put(t1, rules);
+                    }
+                }
+            }
+        }
+        for (Map.Entry<Token, Set<ItemRule>> entry : inputTokens.entrySet()) {
+            Token token = entry.getKey();
+            Set<ItemRule> rules = entry.getValue();
+
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("name", token.getName());
+            map.put("defaultValue", token.getDefaultValue());
+            map.put("string", token.stringify());
+
+            boolean security = false;
+            for (ItemRule ir : rules) {
+                if (ir.isSecurity()) {
+                    security = true;
+                    break;
+                }
+            }
+            map.put("security", security);
+
+            boolean mandatory = false;
+            for (ItemRule ir : rules) {
+                if (ir.isMandatory()) {
+                    mandatory = true;
+                    break;
+                }
+            }
+            map.put("mandatory", mandatory);
+
+            map.put("itemRules", toList(rules));
+            list.add(map);
+        }
+        return list;
+    }
+
+    private List<Map<String, Object>> toList(Set<ItemRule> itemRules) {
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (ItemRule itemRule : itemRules) {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("type", itemRule.getType().toString());
             map.put("name", itemRule.getName());
