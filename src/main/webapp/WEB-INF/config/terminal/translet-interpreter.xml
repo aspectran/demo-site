@@ -28,13 +28,17 @@
     <translet name="/hello">
         <request>
             <parameters>
-                <item name="param1" mandatory="true"/>
-                <item name="param2" mandatory="true"/>
+                <item name="id" mandatory="true"/>
+                <item name="password" mandatory="true" security="true"/>
             </parameters>
         </request>
         <transform type="transform/text">
             <template style="apon">
-                |World
+                |----------------------------------------------------------
+                |The parameters you entered are:
+                |   id: ${id}
+                |   password: ${password}
+                |----------------------------------------------------------
             </template>
         </transform>
     </translet>

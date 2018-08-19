@@ -1,5 +1,12 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<style>
+    .terminal-wrapper textarea {
+        box-shadow: none;
+        min-height: initial;
+        min-width: initial;
+    }
+</style>
 <div id="term_demo" style="margin: 30px auto;"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/1.19.1/js/jquery.terminal.min.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/1.19.1/css/jquery.terminal.min.css" rel="stylesheet"/>
@@ -10,32 +17,66 @@
                 try {
                     term.pause();
                     $.ajax({
-                        url: '/terminal/exec',
-                        data: {
-                            _translet: command
-                        },
+                        url: '/terminal/query/' + command,
                         method: 'GET',
                         dataType: 'json',
                         success: function(data) {
+                            var prompts = [];
                             if (data.response) {
                                 term.echo(response);
-                                term.resume();
                             } else {
-                                term.resume();
                                 var request = data.request;
                                 if (request) {
+                                    var prev = null;
                                     var params = request.parameters;
-                                    if (params && params.length > 0) {
-                                        term.echo("Required parameters:");
-                                        enterEachParameter(params, term);
+                                    if (params && params.tokens) {
+                                        for (var i = 0; i < params.tokens.length; i++) {
+                                            var token = params.tokens[i];
+                                            var item = {
+                                                command: command,
+                                                group: 'parameters',
+                                                prev: prev,
+                                                next: null,
+                                                token: token,
+                                                items: token.items
+                                            };
+                                            prompts.push(item);
+                                            if (prev) {
+                                                prev.next = item;
+                                            }
+                                            prev = item;
+                                            console.log(item);
+                                        }
                                     }
                                     var attrs = request.attributes;
-                                    if (attrs && attrs.length > 0) {
-                                        term.echo("Required attributes:");
-                                        enterEachParameter(attrs, term);
+                                    if (attrs && attrs.tokens) {
+                                        for (var i = 0; i < attrs.tokens.length; i++) {
+                                            var token = attrs.tokens[i];
+                                            var item = {
+                                                command: command,
+                                                group: 'attributes',
+                                                prev: prev,
+                                                next: null,
+                                                token: token,
+                                                items: token.items
+                                            };
+                                            prompts.push(item);
+                                            if (prev) {
+                                                prev.next = item;
+                                            }
+                                            prev = item;
+                                            console.log(item);
+                                        }
                                     }
                                 }
+                                if (prompts.length > 0) {
+                                    prompts[prompts.length - 1].terminator = true;
+                                    enterEachToken(term, prompts[0], true);
+                                }
                             }
+                        },
+                        complete: function () {
+                            term.resume();
                         }
                     });
                 } catch (e) {
@@ -49,41 +90,79 @@
             name: 'transletInterpreter',
             height: 500,
             width: "100%",
-            prompt: 'aspectran> '
+            prompt: 'Aspectran> '
         });
     });
-    function enterEachParameter(params, term) {
-        term.echo("Enter a value for each token:");
-        var missingParams = [];
-        var pp = 0;
-        for (var p = params.length - 1; p >= 0; p--) {
-            term.push(function (value, term) {
-                var mandatory = params[pp].mandatory;
-                if (mandatory && value === '') {
-                    params[pp].missing = (params[pp].missing||0) + 1;
-                    missingParams.push(params[pp]);
-                } else {
-                    params[pp].value = value;
-                    params[pp].missing = 0;
-                }
-                pp++;
-                term.pop();
+    function enterEachToken(term, prompt, first, missed) {
+        if (first) {
+            if (missed) {
+                term.echo("Missing required " + prompt.group + ":");
+            } else {
+                term.echo("Required " + prompt.group + ":");
+            }
 
-                if (pp === params.length) {
-                    if (missingParams.length > 0) {
-                        if (missingParams[0].missing < 2) {
-                            term.echo("Missing required parameters.");
-                            enterEachParameter(missingParams, term);
-                        } else {
-                            term.echo("Missing required parameters:");
-
+            term.echo("Enter a value for each token:");
+        }
+        term.push(function (value, term) {
+            var token = prompt.token;
+            var mandatory = token.mandatory;
+            if (mandatory && value === '') {
+                prompt.done = false;
+            } else {
+                prompt.value = value;
+                prompt.done = true;
+            }
+            term.pop();
+            if (prompt.terminator) {
+                execCommand(term, prompt);
+            } else if (prompt.next) {
+                var next = prompt.next;
+                while (next) {
+                    if (next.done) {
+                        if (next.terminator) {
+                            execCommand(term, prompt);
+                            break;
                         }
+                    } else {
+                        enterEachToken(term, next);
+                        break;
                     }
+                    next = prompt.next;
                 }
-            }, {
-                prompt: p + "  " + params[p].string + ": ",
-                maskChar: params[p].security ? '*' : false
+            }
+        }, {
+            prompt: prompt.token.string + ": "
+        });
+    }
+    function execCommand(term, prompt) {
+        var root = prompt;
+        while (root.prev) {
+            root = root.prev;
+        }
+        var params = {};
+        var curr = root;
+        while (curr) {
+            params[curr.token.name] = curr.value;
+            curr = curr.next;
+        }
+        try {
+            term.pause();
+            $.ajax({
+                url: '/terminal/exec/' + prompt.command,
+                data: params,
+                method: 'POST',
+                dataType: 'text',
+                success: function(data) {
+                    if (data) {
+                        term.echo(data);
+                    }
+                },
+                complete: function () {
+                    term.resume();
+                }
             });
+        } catch (e) {
+            term.error(String(e));
         }
     }
 </script>

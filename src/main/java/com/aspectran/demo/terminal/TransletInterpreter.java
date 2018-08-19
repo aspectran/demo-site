@@ -3,7 +3,8 @@ package com.aspectran.demo.terminal;
 import com.aspectran.core.activity.Activity;
 import com.aspectran.core.activity.Translet;
 import com.aspectran.core.component.bean.annotation.Configuration;
-import com.aspectran.core.component.bean.annotation.Request;
+import com.aspectran.core.component.bean.annotation.RequestAsGet;
+import com.aspectran.core.component.bean.annotation.RequestAsPost;
 import com.aspectran.core.component.bean.annotation.Transform;
 import com.aspectran.core.component.bean.aware.ActivityContextAware;
 import com.aspectran.core.component.translet.TransletNotFoundException;
@@ -18,7 +19,6 @@ import com.aspectran.core.util.StringUtils;
 import com.aspectran.core.util.json.JsonWriter;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,11 +40,10 @@ public class TransletInterpreter implements ActivityContextAware {
         this.context = context;
     }
 
-    @Request(translet = "/exec")
+    @RequestAsGet("/query/@{_translet_}")
     @Transform(type = TransformType.TEXT, contentType = "application/json")
-    public void execute(Translet translet) throws IOException, InvocationTargetException {
-        String transletName = translet.getParameter("_translet");
-        boolean force = Boolean.parseBoolean(translet.getParameter("_force"));
+    public void query(Translet translet) throws IOException, InvocationTargetException {
+        String transletName = translet.getAttribute("_translet_");
         if (StringUtils.isEmpty(transletName)) {
             return;
         }
@@ -59,37 +58,56 @@ public class TransletInterpreter implements ActivityContextAware {
         ItemRuleMap parameterItemRuleMap = transletRule.getRequestRule().getParameterItemRuleMap();
         ItemRuleMap attributeItemRuleMap = transletRule.getRequestRule().getAttributeItemRuleMap();
 
-        Writer writer = translet.getResponseAdapter().getWriter();
-
-        writer.write("{");
-        writer.write("\"translet\": ");
-        new JsonWriter(writer).write(toMap(transletRule));
-
-        writer.write(", \"request\": {");
+        JsonWriter jsonWriter = new JsonWriter(translet.getResponseAdapter().getWriter());
+        jsonWriter.openCurlyBracket();
+        jsonWriter.writeName("translet");
+        jsonWriter.write(toMap(transletRule));
+        jsonWriter.writeComma();
+        jsonWriter.writeName("request");
+        jsonWriter.openCurlyBracket();
         if (parameterItemRuleMap != null) {
-            writer.write("\"parameters\": ");
-            new JsonWriter(writer).write(toList(parameterItemRuleMap));
+            jsonWriter.writeName("parameters");
+            jsonWriter.openCurlyBracket();
+            jsonWriter.writeName("items");
+            jsonWriter.write(toListForItems(parameterItemRuleMap.values()));
+            jsonWriter.writeComma();
+            jsonWriter.writeName("tokens");
+            jsonWriter.write(toListForTokens(parameterItemRuleMap.values()));
+            jsonWriter.closeCurlyBracket();
         }
         if (attributeItemRuleMap != null) {
-            if (parameterItemRuleMap != null) {
-                writer.write(", ");
-            }
-            writer.write("\"attributes\": ");
-            new JsonWriter(writer).write(toList(attributeItemRuleMap));
+            jsonWriter.writeName("attributes");
+            jsonWriter.openCurlyBracket();
+            jsonWriter.writeName("items");
+            jsonWriter.write(toListForItems(attributeItemRuleMap.values()));
+            jsonWriter.writeComma();
+            jsonWriter.writeName("tokens");
+            jsonWriter.write(toListForTokens(attributeItemRuleMap.values()));
+            jsonWriter.closeCurlyBracket();
         }
-        writer.write("}");
+        jsonWriter.closeCurlyBracket();
+        jsonWriter.writeComma();
+        jsonWriter.writeName("contentType");
+        jsonWriter.writeValue(transletRule.getResponseRule().getResponse().getContentType());
+        jsonWriter.closeCurlyBracket();
+    }
 
-        writer.write(", \"contentType\": ");
-        writer.write("\"");
-        writer.write(transletRule.getResponseRule().getResponse().getContentType());
-        writer.write("\"");
-
-        if (force || (parameterItemRuleMap == null && attributeItemRuleMap == null)) {
-            writer.write(", \"response\": ");
-            performActivity(transletRule);
+    @RequestAsPost("/exec/@{_translet_}")
+    @Transform(type = TransformType.TEXT)
+    public void execute(Translet translet) {
+        String transletName = translet.getAttribute("_translet_");
+        if (StringUtils.isEmpty(transletName)) {
+            return;
         }
 
-        writer.write("}");
+        String transletFullName = COMMAND_PREFIX + transletName;
+
+        TransletRule transletRule = context.getTransletRuleRegistry().getTransletRule(transletFullName);
+        if (transletRule == null) {
+            throw new TransletNotFoundException(transletName);
+        }
+
+        performActivity(transletRule);
     }
 
     private void performActivity(TransletRule transletRule) {
@@ -105,11 +123,10 @@ public class TransletInterpreter implements ActivityContextAware {
         return map;
     }
 
-    private List<Map<String, Object>> toList(ItemRuleMap itemRuleMap) {
+    private List<Map<String, Object>> toListForTokens(Collection<ItemRule> itemRules) {
         List<Map<String, Object>> list = new ArrayList<>();
-        Collection<ItemRule> itemRuleList = itemRuleMap.values();
         Map<Token, Set<ItemRule>> inputTokens = new LinkedHashMap<>();
-        for (ItemRule itemRule : itemRuleList) {
+        for (ItemRule itemRule : itemRules) {
             Token[] tokens = itemRule.getAllTokens();
             if (tokens == null || tokens.length == 0) {
                 Token t = new Token(TokenType.PARAMETER, itemRule.getName());
@@ -162,13 +179,13 @@ public class TransletInterpreter implements ActivityContextAware {
             }
             map.put("mandatory", mandatory);
 
-            map.put("itemRules", toList(rules));
+            map.put("items", toListForItems(rules));
             list.add(map);
         }
         return list;
     }
 
-    private List<Map<String, Object>> toList(Set<ItemRule> itemRules) {
+    private List<Map<String, Object>> toListForItems(Collection<ItemRule> itemRules) {
         List<Map<String, Object>> list = new ArrayList<>();
         for (ItemRule itemRule : itemRules) {
             Map<String, Object> map = new LinkedHashMap<>();
