@@ -10,6 +10,7 @@ import com.aspectran.core.component.bean.aware.ActivityContextAware;
 import com.aspectran.core.component.translet.TransletNotFoundException;
 import com.aspectran.core.context.ActivityContext;
 import com.aspectran.core.context.expr.token.Token;
+import com.aspectran.core.context.expr.token.TokenParser;
 import com.aspectran.core.context.rule.ItemRule;
 import com.aspectran.core.context.rule.ItemRuleMap;
 import com.aspectran.core.context.rule.TransletRule;
@@ -76,6 +77,9 @@ public class TransletInterpreter implements ActivityContextAware {
             jsonWriter.closeCurlyBracket();
         }
         if (attributeItemRuleMap != null) {
+            if (parameterItemRuleMap != null) {
+                jsonWriter.writeComma();
+            }
             jsonWriter.writeName("attributes");
             jsonWriter.openCurlyBracket();
             jsonWriter.writeName("items");
@@ -130,6 +134,7 @@ public class TransletInterpreter implements ActivityContextAware {
             Token[] tokens = itemRule.getAllTokens();
             if (tokens == null || tokens.length == 0) {
                 Token t = new Token(TokenType.PARAMETER, itemRule.getName());
+                t.setDefaultValue(itemRule.getDefaultValue());
                 tokens = new Token[] { t };
             }
             for (Token t1 : tokens) {
@@ -195,6 +200,21 @@ public class TransletInterpreter implements ActivityContextAware {
             map.put("defaultValue", itemRule.getDefaultValue());
             map.put("mandatory", itemRule.isMandatory());
             map.put("security", itemRule.isSecurity());
+
+            Token[] tokens = itemRule.getAllTokens();
+            if (tokens == null) {
+                Token t = new Token(TokenType.PARAMETER, itemRule.getName());
+                t.setDefaultValue(itemRule.getDefaultValue());
+                tokens = new Token[] { t };
+            }
+            map.put("tokenString", TokenParser.toString(tokens));
+
+            String[] tokenNames = new String[tokens.length];
+            for (int i = 0; i < tokens.length; i++) {
+                tokenNames[i] = tokens[i].getName();
+            }
+            map.put("tokenNames", tokenNames);
+
             list.add(map);
         }
         return list;

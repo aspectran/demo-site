@@ -38,7 +38,7 @@
                                                 prev: prev,
                                                 next: null,
                                                 token: token,
-                                                items: token.items
+                                                items: params.items
                                             };
                                             prompts.push(item);
                                             if (prev) {
@@ -58,7 +58,7 @@
                                                 prev: prev,
                                                 next: null,
                                                 token: token,
-                                                items: token.items
+                                                items: attrs.items
                                             };
                                             prompts.push(item);
                                             if (prev) {
@@ -71,7 +71,7 @@
                                 }
                                 if (prompts.length > 0) {
                                     prompts[prompts.length - 1].terminator = true;
-                                    enterEachToken(term, prompts[0], true);
+                                    enterEachToken(term, prompts[0]);
                                 }
                             }
                         },
@@ -93,15 +93,36 @@
             prompt: 'Aspectran> '
         });
     });
-    function enterEachToken(term, prompt, first, missed) {
-        if (first) {
-            if (missed) {
-                term.echo("Missing required " + prompt.group + ":");
-            } else {
+    function enterEachToken(term, prompt, missed) {
+        if (missed) {
+            term.echo("Missing required " + prompt.group + ":");
+        } else {
+            if (!prompt.prev || prompt.group !== prompt.prev.group) {
                 term.echo("Required " + prompt.group + ":");
+                var items = prompt.items;
+                for (var i = 0; i < items.length; i++) {
+                    term.echo("   " + items[i].name + ": " + items[i].tokenString);
+                }
+                term.echo("Enter a value for each token:");
             }
-
-            term.echo("Enter a value for each token:");
+        }
+        var curr = prompt.prev;
+        while (curr) {
+            if (prompt.token.name === curr.token.name && curr.done) {
+                prompt.value = curr.value;
+                prompt.done = true;
+                break;
+            }
+            curr = curr.prev;
+        }
+        if (prompt.done) {
+            term.echo("   " + prompt.token.string + ": " + prompt.value);
+            if (prompt.terminator) {
+                execCommand(term, prompt);
+            } else {
+                enterEachToken(term, prompt.next);
+            }
+            return;
         }
         term.push(function (value, term) {
             var token = prompt.token;
@@ -115,25 +136,17 @@
             term.pop();
             if (prompt.terminator) {
                 execCommand(term, prompt);
-            } else if (prompt.next) {
-                var next = prompt.next;
-                while (next) {
-                    if (next.done) {
-                        if (next.terminator) {
-                            execCommand(term, prompt);
-                            break;
-                        }
-                    } else {
-                        enterEachToken(term, next);
-                        break;
-                    }
-                    next = prompt.next;
-                }
+            } else {
+                enterEachToken(term, prompt.next);
             }
         }, {
-            prompt: prompt.token.string + ": "
+            prompt: "   " + prompt.token.string + ": "
         });
     }
+    function checkMandatory(prompt) {
+
+    }
+
     function execCommand(term, prompt) {
         var root = prompt;
         while (root.prev) {

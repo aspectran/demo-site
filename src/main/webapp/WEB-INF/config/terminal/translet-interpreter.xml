@@ -28,16 +28,23 @@
     <translet name="/hello">
         <request>
             <parameters>
-                <item name="id" mandatory="true"/>
+                <item name="email" mandatory="true">${id}@${domain}</item>
                 <item name="password" mandatory="true" security="true"/>
             </parameters>
+            <attributes>
+                <item name="attr1" mandatory="true">${id}@${domain}</item>
+                <item name="attr2" mandatory="true" security="true">${password}</item>
+            </attributes>
         </request>
         <transform type="transform/text">
             <template style="apon">
                 |----------------------------------------------------------
                 |The parameters you entered are:
-                |   id: ${id}
+                |   email: ${email}
                 |   password: ${password}
+                |The attributes you entered are:
+                |   attr1: @{attr1}
+                |   attr2: @{attr2}
                 |----------------------------------------------------------
             </template>
         </transform>
