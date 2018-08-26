@@ -3,8 +3,8 @@
     <div class="undercon" style="text-align:center;font-size:100px;font-weight:bold;color:#ccc;padding:50px 0;">
       <svg xmlns="http://www.w3.org/2000/svg"
         version="1.1"
-        width="6%" viewBox="0 0 971 971"
-        onload="init(evt)">
+        width="70%" viewBox="0 0 971 971"
+        onload="init(evt)" style="max-width:300px;">
 
         <style>
             .gear {
@@ -82,6 +82,6 @@
           />
         </g>
       </svg>
-      <span>Hello, World!</span>
+      <p>Hello, World!</p>
     </div>
   </div>

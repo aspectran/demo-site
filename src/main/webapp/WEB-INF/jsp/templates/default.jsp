@@ -69,7 +69,7 @@
             <div class="top-bar-left">
                 <ul class="dropdown menu" data-dropdown-menu data-close-on-click-inside="false">
                     <li>
-                        <a href="/">Examples</a>
+                        <a href="">Examples</a>
                         <ul class="menu" data-submenu data-close-on-click-inside="false">
                             <li><a href="/examples/hello-world">Hello World</a></li>
                             <li><a href="/examples/gs-rest-service/">RESTful Web Service</a></li>
@@ -77,7 +77,7 @@
                         </ul>
                     </li>
                     <li>
-                        <a href="/">Modules</a>
+                        <a href="">Modules</a>
                         <ul class="menu" data-submenu data-close-on-click-inside="false">
                             <li><a href="/modules/webeditor">Web Editor</a></li>
                         </ul>
@@ -233,6 +233,32 @@
 </footer>
 <script src="http://www.aspectran.com/assets/js/foundation.min.js"></script>
 <script>
+    $(".breadcrumbs").each(function() {
+        var path = location.pathname;
+        var dropdown = $("#gnb-menu .dropdown");
+        var a1 = dropdown.find("a[href='" + path + "']").last();
+        var arr = [];
+        if (a1.size() > 0) {
+            arr.push({'name': a1.text(), 'href': null});
+            a1.parentsUntil(".dropdown > li").each(function () {
+                if ($(this).hasClass("menu")) {
+                    var a2 = $(this).prev();
+                    if (a2.is("a")) {
+                        arr.push({'name': a2.text(), 'href': a2.attr("href")||""});
+                    }
+                }
+            });
+            arr.reverse();
+            for (var i in arr) {
+                var item = arr[i];
+                if (i < arr.length - 1) {
+                    $(".breadcrumbs").append("<li><a href='" + item.href + "'>" + item.name + "</a></li>");
+                } else {
+                    $(".breadcrumbs").append("<li><span class='show-for-sr'>Current: </span> <span class='current'>" + item.name + "</span></li>");
+                }
+            }
+        }
+    });
     $(document).foundation();
     $(document).ready(function() {
         var navFixed = false;
@@ -276,36 +302,6 @@
                 $(this).before("<a class='toc-anchor " + anchor + "' id='" + anchor + "' name='" + anchor + "'></a>");
             }
             $("#toc ul").append("<li class='toc-" + tagn + "'><a anchor='" + anchor + "' href='#" + anchor + "'>" + $(item).text() + "</a></li>");
-        });
-    });
-</script>
-<script>
-    $(document).ready(function() {
-        $(".breadcrumbs").each(function() {
-            var path = location.pathname;
-            var dropdown = $("#gnb-menu .dropdown");
-            var a1 = dropdown.find("a[href='" + path + "']").last();
-            var arr = [];
-            if (a1.size() > 0) {
-                arr.push({'name': a1.text(), 'href': null});
-                a1.parentsUntil(".dropdown > li").each(function () {
-                    if ($(this).hasClass("menu")) {
-                        var a2 = $(this).prev();
-                        if (a2.is("a")) {
-                            arr.push({'name': a2.text(), 'href': a2.attr("href")||""});
-                        }
-                    }
-                });
-                arr.reverse();
-                for (var i in arr) {
-                    var item = arr[i];
-                    if (i < arr.length - 1) {
-                        $(".breadcrumbs").append("<li><a href='" + item.href + "'>" + item.name + "</a></li>");
-                    } else {
-                        $(".breadcrumbs").append("<li><span class='show-for-sr'>Current: </span> <span class='current'>" + item.name + "</span></li>");
-                    }
-                }
-            }
         });
     });
 </script>
