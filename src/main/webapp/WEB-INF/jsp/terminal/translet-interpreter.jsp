@@ -8,8 +8,8 @@
     }
 </style>
 <div id="term_demo" style="margin: 30px auto;"></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/1.20.2/js/jquery.terminal.min.js"></script>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/1.20.2/css/jquery.terminal.min.css" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/1.21.0/js/jquery.terminal.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/1.21.0/css/jquery.terminal.min.css" rel="stylesheet"/>
 <script>
     $(function() {
         $('#term_demo').terminal(function(command, term) {
@@ -21,55 +21,51 @@
                     dataType: 'json',
                     success: function(data) {
                         var prompts = [];
-                        if (data.response) {
-                            term.echo(response);
-                        } else {
-                            var request = data.request;
-                            if (request) {
-                                var prev = null;
-                                var params = request.parameters;
-                                if (params && params.tokens) {
-                                    for (var i = 0; i < params.tokens.length; i++) {
-                                        var token = params.tokens[i];
-                                        var item = {
-                                            command: command,
-                                            group: 'parameters',
-                                            prev: prev,
-                                            next: null,
-                                            token: token,
-                                            items: params.items
-                                        };
-                                        prompts.push(item);
-                                        if (prev) {
-                                            prev.next = item;
-                                        }
-                                        prev = item;
+                        var request = data.request;
+                        if (request) {
+                            var prev = null;
+                            var params = request.parameters;
+                            if (params && params.tokens) {
+                                for (var i = 0; i < params.tokens.length; i++) {
+                                    var token = params.tokens[i];
+                                    var item = {
+                                        command: command,
+                                        group: 'parameters',
+                                        prev: prev,
+                                        next: null,
+                                        token: token,
+                                        items: params.items
+                                    };
+                                    prompts.push(item);
+                                    if (prev) {
+                                        prev.next = item;
                                     }
-                                }
-                                var attrs = request.attributes;
-                                if (attrs && attrs.tokens) {
-                                    for (var i = 0; i < attrs.tokens.length; i++) {
-                                        var token = attrs.tokens[i];
-                                        var item = {
-                                            command: command,
-                                            group: 'attributes',
-                                            prev: prev,
-                                            next: null,
-                                            token: token,
-                                            items: attrs.items
-                                        };
-                                        prompts.push(item);
-                                        if (prev) {
-                                            prev.next = item;
-                                        }
-                                        prev = item;
-                                    }
+                                    prev = item;
                                 }
                             }
-                            if (prompts.length > 0) {
-                                prompts[prompts.length - 1].terminator = true;
-                                enterEachToken(term, prompts[0]);
+                            var attrs = request.attributes;
+                            if (attrs && attrs.tokens) {
+                                for (var i = 0; i < attrs.tokens.length; i++) {
+                                    var token = attrs.tokens[i];
+                                    var item = {
+                                        command: command,
+                                        group: 'attributes',
+                                        prev: prev,
+                                        next: null,
+                                        token: token,
+                                        items: attrs.items
+                                    };
+                                    prompts.push(item);
+                                    if (prev) {
+                                        prev.next = item;
+                                    }
+                                    prev = item;
+                                }
                             }
+                        }
+                        if (prompts.length > 0) {
+                            prompts[prompts.length - 1].terminator = true;
+                            enterEachToken(term, prompts[0]);
                         }
                     },
                     complete: function () {
