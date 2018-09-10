@@ -36,6 +36,9 @@
             <item name="allowedOrigins" type="set">
                 <value>http://demo.aspectran.com</value>
                 <value>http://www.aspectran.com</value>
+                <value>http://localhost:8081</value>
+                <value>http://localhost</value>
+                <value>http://127.0.0.1</value>
             </item>
             <item name="allowedMethods" type="set">
                 <value>GET</value>
