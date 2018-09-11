@@ -91,13 +91,17 @@ public class TransletInterpreter implements ActivityContextAware {
         }
         jsonWriter.closeCurlyBracket();
         jsonWriter.writeComma();
-        jsonWriter.writeName("contentType");
-        jsonWriter.writeValue(transletRule.getResponseRule().getResponse().getContentType());
+        jsonWriter.writeName("response");
+        jsonWriter.openCurlyBracket();
+        if (transletRule.getResponseRule().getResponse() != null) {
+            jsonWriter.writeName("contentType");
+            jsonWriter.writeValue(transletRule.getResponseRule().getResponse().getContentType());
+        }
+        jsonWriter.closeCurlyBracket();
         jsonWriter.closeCurlyBracket();
     }
 
     @RequestAsPost("/exec/@{_translet_}")
-    @Transform(type = TransformType.TEXT)
     public void execute(Translet translet) {
         String transletName = translet.getAttribute("_translet_");
         if (StringUtils.isEmpty(transletName)) {

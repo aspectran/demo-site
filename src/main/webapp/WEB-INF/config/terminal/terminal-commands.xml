@@ -3,6 +3,27 @@
 
 <aspectran>
 
+    <bean id="speaker" class="com.aspectran.demo.tts.TextToSpeechBean">
+        <properties>
+            <item name="properties" type="properties">
+                <value name="freetts.voices">com.sun.speech.freetts.en.us.cmu_us_kal.KevinVoiceDirectory</value>
+            </item>
+            <item name="voiceName">kevin16</item>
+        </properties>
+    </bean>
+
+    <translet name="/speak">
+        <request>
+            <parameters>
+                <item name="text"/>
+            </parameters>
+        </request>
+        <action bean="speaker" method="speak"/>
+        <response>
+            <transform contentType="audio/x-wav"/>
+        </response>
+    </translet>
+
     <translet name="/hello">
         <request>
             <parameters>

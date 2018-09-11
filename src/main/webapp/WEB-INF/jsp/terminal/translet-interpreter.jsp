@@ -8,8 +8,8 @@
     }
 </style>
 <div id="term_demo" style="margin: 30px auto;"></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/1.22.1/js/jquery.terminal.min.js"></script>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/1.22.1/css/jquery.terminal.min.css" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/1.22.3/js/jquery.terminal.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/1.22.3/css/jquery.terminal.min.css" rel="stylesheet"/>
 <script>
     $(function() {
         $('#term_demo').terminal(function(command, term) {
@@ -22,6 +22,7 @@
                     success: function(data) {
                         var prompts = [];
                         var request = data.request;
+                        var response = data.response;
                         if (request) {
                             var prev = null;
                             var params = request.parameters;
@@ -30,6 +31,7 @@
                                     var token = params.tokens[i];
                                     var item = {
                                         command: command,
+                                        contentType: response.contentType,
                                         group: 'parameters',
                                         prev: prev,
                                         next: null,
@@ -49,6 +51,7 @@
                                     var token = attrs.tokens[i];
                                     var item = {
                                         command: command,
+                                        contentType: response.contentType,
                                         group: 'attributes',
                                         prev: prev,
                                         next: null,
@@ -220,19 +223,56 @@
             curr = curr.next;
         }
         term.pause();
-        $.ajax({
-            url: '/terminal/exec/' + prompt.command,
-            data: params,
-            method: 'POST',
-            dataType: 'text',
-            success: function(data) {
-                if (data) {
-                    term.echo(data);
+        if (prompt.contentType == "audio/x-wav") {
+            $.ajax({
+                url: '/terminal/exec/' + prompt.command,
+                data: params,
+                type: 'POST',
+                processData:  false,
+                success: function(result) {
+                    var type = prompt.contentType;
+                    var blob = new Blob([result], { type: type });
+                    var filename = "a.wav";
+                    if (typeof window.navigator.msSaveBlob !== 'undefined') {
+                        // IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed."
+                        window.navigator.msSaveBlob(blob, filename);
+                    } else {
+                        var URL = window.URL || window.webkitURL;
+                        var downloadUrl = URL.createObjectURL(blob);
+                        if (filename) {
+                            // use HTML5 a[download] attribute to specify filename
+                            var a = document.createElement("a");
+                            // safari doesn't support this yet
+                            if (typeof a.download === 'undefined') {
+                                window.location = downloadUrl;
+                            } else {
+                                a.href = downloadUrl;
+                                a.download = filename;
+                                document.body.appendChild(a);
+                                a.click();
+                            }
+                        } else {
+                            window.location = downloadUrl;
+                        }
+                        setTimeout(function () { URL.revokeObjectURL(downloadUrl); }, 100); // cleanup
+                    }
                 }
-            },
-            complete: function () {
-                term.resume();
-            }
-        });
+            });
+        } else {
+            $.ajax({
+                url: '/terminal/exec/' + prompt.command,
+                data: params,
+                method: 'POST',
+                dataType: 'text',
+                success: function (data) {
+                    if (data) {
+                        term.echo(data);
+                    }
+                },
+                complete: function () {
+                    term.resume();
+                }
+            });
+        }
     }
 </script>
