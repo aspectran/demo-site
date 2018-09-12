@@ -4,7 +4,7 @@
 <html class="no-js" lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
     <title>${empty page.title ? "Aspectran Demo" : page.title}</title>
     <meta name="description" content="${empty page.description ? "Welcome to Aspectran Demo" : page.description}" />
     <link rel="stylesheet" type="text/css" href="http://www.aspectran.com/assets/css/styles_aspectran.css" />

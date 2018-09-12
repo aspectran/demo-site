@@ -20,7 +20,7 @@
         </request>
         <action bean="speaker" method="speak"/>
         <response>
-            <transform contentType="audio/x-wav"/>
+            <transform contentType="audio/wav"/>
         </response>
     </translet>
 

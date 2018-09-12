@@ -223,41 +223,13 @@
             curr = curr.next;
         }
         term.pause();
-        if (prompt.contentType == "audio/x-wav") {
-            $.ajax({
-                url: '/terminal/exec/' + prompt.command,
-                data: params,
-                type: 'POST',
-                processData:  false,
-                success: function(result) {
-                    var type = prompt.contentType;
-                    var blob = new Blob([result], { type: type });
-                    var filename = "a.wav";
-                    if (typeof window.navigator.msSaveBlob !== 'undefined') {
-                        // IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed."
-                        window.navigator.msSaveBlob(blob, filename);
-                    } else {
-                        var URL = window.URL || window.webkitURL;
-                        var downloadUrl = URL.createObjectURL(blob);
-                        if (filename) {
-                            // use HTML5 a[download] attribute to specify filename
-                            var a = document.createElement("a");
-                            // safari doesn't support this yet
-                            if (typeof a.download === 'undefined') {
-                                window.location = downloadUrl;
-                            } else {
-                                a.href = downloadUrl;
-                                a.download = filename;
-                                document.body.appendChild(a);
-                                a.click();
-                            }
-                        } else {
-                            window.location = downloadUrl;
-                        }
-                        setTimeout(function () { URL.revokeObjectURL(downloadUrl); }, 100); // cleanup
-                    }
-                }
-            });
+        if (prompt.contentType.indexOf("audio/") === 0) {
+            term.resume();
+            var src = '/terminal/' + prompt.command + '?' + $.param(params);
+            var html = "<audio preload='auto' controls autoplay>" +
+                "<source src=\"" + src + "\" type='audio/wav'>" +
+                "Your browser does not support the audio element.</audio>";
+            term.echo(html, {raw: true});
         } else {
             $.ajax({
                 url: '/terminal/exec/' + prompt.command,

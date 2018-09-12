@@ -23,9 +23,9 @@ public class ByteArrayAudioPlayer implements AudioPlayer {
 
     private byte[] outputData;
 
-    private int curIndex = 0;
+    private int currIndex = 0;
 
-    private int totBytes = 0;
+    private int totalBytes = 0;
 
     /**
      * Constructs a ByteArrayAudioPlayer.
@@ -162,7 +162,7 @@ public class ByteArrayAudioPlayer implements AudioPlayer {
     @Override
     public void begin(int size) {
         outputData = new byte[size];
-        curIndex = 0;
+        currIndex = 0;
     }
 
     /**
@@ -171,7 +171,7 @@ public class ByteArrayAudioPlayer implements AudioPlayer {
     @Override
     public boolean end() {
         outputList.add(new ByteArrayInputStream(outputData));
-        totBytes += outputData.length;
+        totalBytes += outputData.length;
         return true;
     }
 
@@ -198,8 +198,8 @@ public class ByteArrayAudioPlayer implements AudioPlayer {
      */
     @Override
     public boolean write(byte[] bytes, int offset, int size) {
-        System.arraycopy(bytes, offset, outputData, curIndex, size);
-        curIndex += size;
+        System.arraycopy(bytes, offset, outputData, currIndex, size);
+        currIndex += size;
         return true;
     }
 
@@ -217,8 +217,12 @@ public class ByteArrayAudioPlayer implements AudioPlayer {
         if (sampleSize == AudioSystem.NOT_SPECIFIED) {
             sampleSize = 16; // usually 16 bit data
         }
-        long lengthInSamples = totBytes / (sampleSize / 8);
+        long lengthInSamples = totalBytes / (sampleSize / 8);
         return new AudioInputStream(inputStream, af, lengthInSamples);
+    }
+
+    public int getTotalBytes() {
+        return totalBytes;
     }
 
     /**
