@@ -172,8 +172,10 @@ public class TextToSpeechBean implements InitializableBean, DisposableBean {
     }
 
     public void speak(Translet translet) throws IOException {
-        translet.getResponseAdapter().setHeader("Content-Type", "audio/wav");
-        translet.getResponseAdapter().setHeader("Content-Disposition", "attachment; filename=\"voice.wav\"");
+        System.out.println(translet.getRequestAdapter().getHeader("Range"));
+
+        translet.getResponseAdapter().setHeader("Content-Type", "audio/vnd.wav");
+        translet.getResponseAdapter().setHeader("Content-Disposition", "attachment; filename=\"output.wav\"");
         String text = translet.getParameter("text");
         if (text != null && text.length() > 0) {
             ByteArrayAudioPlayer audioPlayer = getAudioPlayer(text);
@@ -182,6 +184,7 @@ public class TextToSpeechBean implements InitializableBean, DisposableBean {
             AudioInputStream ais = audioPlayer.getAudioInputStream();
             AudioSystem.write(ais, AudioFileFormat.Type.WAVE, translet.getResponseAdapter().getOutputStream());
         }
+        System.out.println(translet.getResponseAdapter().getHeader("Content-Range"));
     }
 
     public static void main(String[] args) {

@@ -225,8 +225,8 @@
         term.pause();
         if (prompt.contentType.indexOf("audio/") === 0) {
             term.resume();
-            var src = '/terminal/' + prompt.command + '?' + $.param(params);
-            var html = "<audio preload='auto' controls autoplay>" +
+            var src = encodeURI('/terminal/speak?' + $.param(params));
+            var html = "<audio preload='false' controls autoplay>" +
                 "<source src=\"" + src + "\" type='audio/wav'>" +
                 "Your browser does not support the audio element.</audio>";
             term.echo(html, {raw: true});
