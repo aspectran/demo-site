@@ -31,6 +31,7 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Base64;
 import java.util.Properties;
 import java.util.Set;
 
@@ -139,60 +140,37 @@ public class TextToSpeechBean implements InitializableBean, DisposableBean {
         voice.speak(text);
     }
 
-    public synchronized ByteArrayAudioPlayer getAudioPlayer(String text) {
-        if (voice == null) {
-            throw new IllegalStateException("Cannot find a voice named " + voiceName);
-        }
-        AudioPlayer oldAudioPlayer = voice.getAudioPlayer();
-        ByteArrayAudioPlayer audioPlayer = new ByteArrayAudioPlayer();
-        voice.setAudioPlayer(audioPlayer);
-        voice.speak(text);
-        voice.setAudioPlayer(oldAudioPlayer);
-        return audioPlayer;
-    }
-
-    public synchronized AudioInputStream getAudioInputStream(String text) {
-        if (voice == null) {
-            throw new IllegalStateException("Cannot find a voice named " + voiceName);
-        }
-        ByteArrayAudioPlayer audioPlayer = getAudioPlayer(text);
-        return audioPlayer.getAudioInputStream();
-    }
-
     /**
      * Sends synthesized sound data to an output stream of bytes.
      *
      * @param text the text that will be transformed to speech
      * @param out the output stream of bytes
-     * @throws IOException
      */
-    public synchronized void speak(String text, OutputStream out) throws IOException {
-        AudioInputStream ais = getAudioInputStream(text);
-        AudioSystem.write(ais, AudioFileFormat.Type.WAVE, out);
+    public synchronized int speak(String text, OutputStream out) {
+        if (voice == null) {
+            throw new IllegalStateException("Cannot find a voice named " + voiceName);
+        }
+        AudioPlayer oldAudioPlayer = voice.getAudioPlayer();
+        ByteStreamAudioPlayer audioPlayer = new ByteStreamAudioPlayer(out);
+        audioPlayer.setTransformer(bytes -> Base64.getEncoder().encode(bytes));
+        voice.setAudioPlayer(audioPlayer);
+        voice.speak(text);
+        voice.setAudioPlayer(oldAudioPlayer);
+        return audioPlayer.getTotalBytes();
     }
 
     public void speak(Translet translet) throws IOException {
-        translet.getResponseAdapter().setHeader("Content-Type", "audio/vnd.wav");
-        translet.getResponseAdapter().setHeader("Content-Disposition", "attachment; filename=\"output.wav\"");
         String text = translet.getParameter("text");
-        if (text != null && text.length() > 0) {
-            ByteArrayAudioPlayer audioPlayer = getAudioPlayer(text);
-            int bytes = audioPlayer.getTotalBytes();
-            translet.getResponseAdapter().setHeader("Content-Range", "bytes 0-" + (bytes - 1) + "/" + (bytes - 1));
-            translet.getResponseAdapter().setHeader("Content-Length", Integer.toString(audioPlayer.getTotalBytes()));
-            translet.getResponseAdapter().setHeader("Accept-Ranges", "bytes");
-            AudioInputStream ais = audioPlayer.getAudioInputStream();
-            OutputStream out = translet.getResponseAdapter().getOutputStream();
-            AudioSystem.write(ais, AudioFileFormat.Type.WAVE, out);
-        }
-        translet.getResponseAdapter().setStatus(200);
+        OutputStream out = translet.getResponseAdapter().getOutputStream();
+        out.write("data:audio/wav;base64,".getBytes());
+        speak(text, out);
     }
 
     public static void main(String[] args) {
         TextToSpeechBean textToSpeechBean = new TextToSpeechBean();
         textToSpeechBean.setVoiceName("kevin16");
         textToSpeechBean.initialize();
-        textToSpeechBean.speak("test");
+        textToSpeechBean.speak("test", System.out);
         textToSpeechBean.destroy();
     }
 

@@ -8,8 +8,8 @@
     }
 </style>
 <div id="term_demo" style="margin: 30px auto;"></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/1.22.3/js/jquery.terminal.min.js"></script>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/1.22.3/css/jquery.terminal.min.css" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/1.22.4/js/jquery.terminal.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/1.22.4/css/jquery.terminal.min.css" rel="stylesheet"/>
 <script>
     $(function() {
         $('#term_demo').terminal(function(command, term) {
@@ -69,6 +69,12 @@
                         if (prompts.length > 0) {
                             prompts[prompts.length - 1].terminator = true;
                             enterEachToken(term, prompts[0]);
+                        } else {
+                            var prompt = {
+                                command: command,
+                                contentType: response.contentType
+                            };
+                            execCommand(term, prompt);
                         }
                     },
                     complete: function () {
@@ -79,7 +85,7 @@
                 term.echo('');
             }
         }, {
-            greetings: 'Translet Interpreter\nType \"hello\"',
+            greetings: 'Translet Interpreter\nType "hello" or "speak"',
             name: 'transletInterpreter',
             height: 500,
             width: "100%",
@@ -218,33 +224,31 @@
         }
         var params = {};
         var curr = root;
-        while (curr) {
+        while (curr && curr.token) {
             params[curr.token.name] = curr.value;
             curr = curr.next;
         }
         term.pause();
-        if (prompt.contentType.indexOf("audio/") === 0) {
-            term.resume();
-            var src = encodeURI('/terminal/speak?' + $.param(params));
-            var html = "<audio preload='false' controls autoplay>" +
-                "<source src=\"" + src + "\" type='audio/wav'>" +
-                "Your browser does not support the audio element.</audio>";
-            term.echo(html, {raw: true});
-        } else {
-            $.ajax({
-                url: '/terminal/exec/' + prompt.command,
-                data: params,
-                method: 'POST',
-                dataType: 'text',
-                success: function (data) {
-                    if (data) {
+        $.ajax({
+            url: '/terminal/exec/' + prompt.command,
+            data: params,
+            method: 'POST',
+            dataType: 'text',
+            success: function (data) {
+                if (data) {
+                    if (prompt.contentType.indexOf("audio/") === 0) {
+                        var html = "<audio controls autoplay>" +
+                            "<source src=\"" + data + "\" type='audio/wav'>" +
+                            "Your browser does not support the audio element.</audio>";
+                        term.echo(html, {raw: true});
+                    } else {
                         term.echo(data);
                     }
-                },
-                complete: function () {
-                    term.resume();
                 }
-            });
-        }
+            },
+            complete: function () {
+                term.resume();
+            }
+        });
     }
 </script>

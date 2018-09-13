@@ -115,12 +115,12 @@ public class TransletInterpreter implements ActivityContextAware {
             throw new TransletNotFoundException(transletName);
         }
 
-        performActivity(transletRule);
+        performActivity(transletFullName, transletRule);
     }
 
-    private void performActivity(TransletRule transletRule) {
+    private void performActivity(String transletName, TransletRule transletRule) {
         Activity activity = context.getCurrentActivity().newActivity();
-        activity.prepare(transletRule);
+        activity.prepare(transletName, transletRule);
         activity.perform();
     }
 

@@ -15,12 +15,19 @@
     <translet name="/speak">
         <request>
             <parameters>
-                <item name="text"/>
+                <item name="text" mandatory="true"/>
             </parameters>
         </request>
         <action bean="speaker" method="speak"/>
         <response>
-            <transform contentType="audio/wav"/>
+            <transform contentType="audio/wav;base64"/>
+        </response>
+    </translet>
+
+    <translet name="/speak ${text}">
+        <action bean="speaker" method="speak"/>
+        <response>
+            <transform contentType="audio/wav;base64"/>
         </response>
     </translet>
 

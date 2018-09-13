@@ -2,24 +2,27 @@ package com.aspectran.demo.tts;
 
 import com.sun.speech.freetts.audio.AudioPlayer;
 
+import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.SequenceInputStream;
-import java.util.Vector;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Provides an implementation of <code>AudioPlayer</code> that sends
  * all audio data to the bit bucket. The <code>ByteArrayAudioPlayer</code>
  * is a helper, targeted at obtaining a byte array from the audio stream.
  */
-public class ByteArrayAudioPlayer implements AudioPlayer {
+public class ByteStreamAudioPlayer implements AudioPlayer {
+
+    private OutputStream output;
 
     private AudioFormat audioFormat;
 
-    private Vector<ByteArrayInputStream> outputList;
+    private Transformer transformer;
 
     private byte[] outputData;
 
@@ -28,10 +31,10 @@ public class ByteArrayAudioPlayer implements AudioPlayer {
     private int totalBytes = 0;
 
     /**
-     * Constructs a ByteArrayAudioPlayer.
+     * Constructs a ByteStreamAudioPlayer.
      */
-    public ByteArrayAudioPlayer() {
-        outputList = new Vector<>();
+    public ByteStreamAudioPlayer(OutputStream output) {
+        this.output = output;
     }
 
     /**
@@ -52,6 +55,10 @@ public class ByteArrayAudioPlayer implements AudioPlayer {
     @Override
     public AudioFormat getAudioFormat() {
         return audioFormat;
+    }
+
+    public void setTransformer(Transformer transformer) {
+        this.transformer = transformer;
     }
 
     /**
@@ -170,8 +177,16 @@ public class ByteArrayAudioPlayer implements AudioPlayer {
      */
     @Override
     public boolean end() {
-        outputList.add(new ByteArrayInputStream(outputData));
         totalBytes += outputData.length;
+        try {
+            byte[] audioData = audioData();
+            if (transformer != null) {
+                audioData = transformer.transform(audioData());
+            }
+            output.write(audioData);
+        } catch (IOException e) {
+            // ignore
+        }
         return true;
     }
 
@@ -207,14 +222,16 @@ public class ByteArrayAudioPlayer implements AudioPlayer {
      * Provide the audio data that has been written to this AudioPlayer since
      * the last call to begin() as a byte array.
      */
-    public AudioInputStream getAudioInputStream() {
-        InputStream inputStream = new SequenceInputStream(outputList.elements());
+    private byte[] audioData() throws IOException {
         AudioFormat af = getAudioFormat();
         if (af == null) {
             af = new AudioFormat(16000.0f, 16, 1, true, true);
         }
         long lengthInSamples = totalBytes / af.getFrameSize();
-        return new AudioInputStream(inputStream, af, lengthInSamples);
+        AudioInputStream ais = new AudioInputStream(new ByteArrayInputStream(outputData), af, lengthInSamples);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        AudioSystem.write(ais, AudioFileFormat.Type.WAVE, out);
+        return out.toByteArray();
     }
 
     public int getTotalBytes() {
@@ -229,6 +246,10 @@ public class ByteArrayAudioPlayer implements AudioPlayer {
     @Override
     public String toString() {
         return "ByteArrayAudioPlayer";
+    }
+
+    interface Transformer {
+        byte[] transform(byte[] bytes);
     }
 
 }
