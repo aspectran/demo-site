@@ -172,19 +172,20 @@ public class TextToSpeechBean implements InitializableBean, DisposableBean {
     }
 
     public void speak(Translet translet) throws IOException {
-        System.out.println(translet.getRequestAdapter().getHeader("Range"));
-
         translet.getResponseAdapter().setHeader("Content-Type", "audio/vnd.wav");
         translet.getResponseAdapter().setHeader("Content-Disposition", "attachment; filename=\"output.wav\"");
         String text = translet.getParameter("text");
         if (text != null && text.length() > 0) {
             ByteArrayAudioPlayer audioPlayer = getAudioPlayer(text);
-            translet.getResponseAdapter().setHeader("Content-Range", "bytes 0-" + audioPlayer.getTotalBytes() + "/" + audioPlayer.getTotalBytes());
+            int bytes = audioPlayer.getTotalBytes();
+            translet.getResponseAdapter().setHeader("Content-Range", "bytes 0-" + (bytes - 1) + "/" + (bytes - 1));
             translet.getResponseAdapter().setHeader("Content-Length", Integer.toString(audioPlayer.getTotalBytes()));
+            translet.getResponseAdapter().setHeader("Accept-Ranges", "bytes");
             AudioInputStream ais = audioPlayer.getAudioInputStream();
-            AudioSystem.write(ais, AudioFileFormat.Type.WAVE, translet.getResponseAdapter().getOutputStream());
+            OutputStream out = translet.getResponseAdapter().getOutputStream();
+            AudioSystem.write(ais, AudioFileFormat.Type.WAVE, out);
         }
-        System.out.println(translet.getResponseAdapter().getHeader("Content-Range"));
+        translet.getResponseAdapter().setStatus(200);
     }
 
     public static void main(String[] args) {
