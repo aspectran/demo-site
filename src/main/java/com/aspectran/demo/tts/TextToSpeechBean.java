@@ -25,10 +25,6 @@ import com.sun.speech.freetts.Voice;
 import com.sun.speech.freetts.VoiceManager;
 import com.sun.speech.freetts.audio.AudioPlayer;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Base64;
@@ -44,6 +40,8 @@ import java.util.Set;
 public class TextToSpeechBean implements InitializableBean, DisposableBean {
 
     private static final Log log = LogFactory.getLog(TextToSpeechBean.class);
+
+    private static final byte[] DATA_URI_PREFIX = "data:audio/wav;base64,".getBytes();
 
     private String voicePackage;
 
@@ -162,7 +160,7 @@ public class TextToSpeechBean implements InitializableBean, DisposableBean {
     public void speak(Translet translet) throws IOException {
         String text = translet.getParameter("text");
         OutputStream out = translet.getResponseAdapter().getOutputStream();
-        out.write("data:audio/wav;base64,".getBytes());
+        out.write(DATA_URI_PREFIX);
         speak(text, out);
     }
 

@@ -179,9 +179,9 @@ public class ByteStreamAudioPlayer implements AudioPlayer {
     public boolean end() {
         totalBytes += outputData.length;
         try {
-            byte[] audioData = audioData();
+            byte[] audioData = makeAudioData();
             if (transformer != null) {
-                audioData = transformer.transform(audioData());
+                audioData = transformer.transform(audioData);
             }
             output.write(audioData);
         } catch (IOException e) {
@@ -222,7 +222,7 @@ public class ByteStreamAudioPlayer implements AudioPlayer {
      * Provide the audio data that has been written to this AudioPlayer since
      * the last call to begin() as a byte array.
      */
-    private byte[] audioData() throws IOException {
+    private byte[] makeAudioData() throws IOException {
         AudioFormat af = getAudioFormat();
         if (af == null) {
             af = new AudioFormat(16000.0f, 16, 1, true, true);
@@ -245,7 +245,7 @@ public class ByteStreamAudioPlayer implements AudioPlayer {
      */
     @Override
     public String toString() {
-        return "ByteArrayAudioPlayer";
+        return "ByteStreamAudioPlayer";
     }
 
     interface Transformer {
