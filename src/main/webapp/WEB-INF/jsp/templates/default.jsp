@@ -50,18 +50,18 @@
 </head>
 <body id="top-of-page" class="article" itemscope itemtype="http://schema.org/WebPage">
 <nav id="navigation" class="no-js">
-    <div class="title-bar" data-responsive-toggle="gnb-menu" data-hide-for="large">
+    <div class="title-bar" data-responsive-toggle="gnb-menu" data-hide-for="large" style="display:none">
         <div class="title-bar-left">
             <a class="logo" href="/" title="Aspectran"><img src="http://www.aspectran.com/assets/img/aspectran-icon.png" alt="Aspectran"/></a>
         </div>
         <div class="title-bar-center">
             <a href="#top-of-page">Aspectran</a>
         </div>
-        <div class="title-bar-right">
-            <button class="menu-icon" type="button" data-toggle></button>
+        <div class="title-bar-right" data-toggle>
+            <button class="menu-icon" type="button"></button>
         </div>
     </div>
-    <div class="top-bar" id="gnb-menu">
+    <div class="top-bar" id="gnb-menu" style="display:none">
         <div class="row">
             <div class="top-bar-logo">
                 <a class="logo" href="/" title="Aspectran"><img src="http://www.aspectran.com/assets/img/aspectran-icon.png" alt="Aspectran"/></a>
@@ -115,6 +115,16 @@
                         </div>
                     </div>
                 </form>
+            </div>
+        </div>
+        <div class="breadcrumbs-bar" style="display:none" data-hide-for="medium down">
+            <div class="row">
+                <nav role="navigation" aria-label="You are here:">
+                    <ul class="breadcrumbs" itemprop="breadcrumb">
+                        <li><a href="http://www.aspectran.com/">Aspectran</a></li>
+                        <li><a href="/">Demo</a></li>
+                    </ul>
+                </nav>
             </div>
         </div>
     </div>
@@ -233,58 +243,67 @@
 </footer>
 <script src="http://www.aspectran.com/assets/js/foundation.min.js"></script>
 <script>
-    $(".breadcrumbs").each(function() {
-        var path = location.pathname;
-        var dropdown = $("#gnb-menu .dropdown");
-        var a1 = dropdown.find("a[href='" + path + "']").last();
+    var path = location.pathname;
+    var a1 = $("#gnb-menu .top-bar-left .dropdown li a[href='" + path + "']").last();
+    if (a1.size() > 0) {
         var arr = [];
-        if (a1.size() > 0) {
-            arr.push({'name': a1.text(), 'href': null});
-            a1.parentsUntil(".dropdown > li").each(function () {
-                if ($(this).hasClass("menu")) {
-                    var a2 = $(this).prev();
-                    if (a2.is("a")) {
-                        arr.push({'name': a2.text(), 'href': a2.attr("href")||""});
-                    }
-                }
-            });
-            arr.reverse();
-            for (var i in arr) {
-                var item = arr[i];
-                if (i < arr.length - 1) {
-                    $(".breadcrumbs").append("<li><a href='" + item.href + "'>" + item.name + "</a></li>");
-                } else {
-                    $(".breadcrumbs").append("<li><span class='show-for-sr'>Current: </span> <span class='current'>" + item.name + "</span></li>");
-                }
-            }
-        }
-    });
-    $(document).foundation();
-    $(document).ready(function() {
-        var navFixed = false;
-        var navHeight = $("#masthead").height() - $("#navigation").height();
-        var $win = $(window);
-        $win.scroll(function() {
-            var scrollTop = $win.scrollTop();
-            if(navFixed) {
-                if(scrollTop < navHeight) {
-                    navFixed = false;
-                    $("#navigation").removeClass("fixed");
-                    $("#navigation").hide();
-                    $("#navigation").slideDown(220);
-                }
-            } else {
-                if(scrollTop > navHeight) {
-                    navFixed = true;
-                    $("#navigation").addClass("fixed");
-                    $("#navigation").hide();
-                    $("#navigation").fadeIn(450);
+        arr.push({'name': a1.text(), 'href': null});
+        a1.parentsUntil(".dropdown > li:eq(0)").each(function() {
+            if ($(this).hasClass("menu")) {
+                var a2 = $(this).prev();
+                if (a2.is("a")) {
+                    arr.push({'name': a2.text(), 'href': a2.attr("href")||""});
                 }
             }
         });
-        if($win.scrollTop() > navHeight) {
-            $win.scroll();
+        arr.reverse();
+        for (var i in arr) {
+            var item = arr[i];
+            if (i < arr.length - 1) {
+                $(".breadcrumbs").append("<li><a href='" + item.href + "'>" + item.name + "</a></li>");
+            } else {
+                $(".breadcrumbs").append("<li><span class='show-for-sr'>Current: </span> <span class='current'>" + item.name + "</span></li>");
+            }
         }
+    }
+    $(document).foundation();
+    $(document).ready(function() {
+        var $win = $(window);
+        var $nav = $("#navigation");
+        var navHeight = $("#masthead").height() - $nav.height();
+        var lastScrollTop = 0;
+        var scrolled;
+        var navFixed;
+        $win.scroll(function() {
+            scrolled = true;
+        });
+        setInterval(function() {
+            if (scrolled) {
+                var scrollTop = $win.scrollTop();
+                if (Math.abs(lastScrollTop - scrollTop) <= 10) {
+                    return;
+                }
+                if (scrollTop <= navHeight) {
+                    if (navFixed) {
+                        $nav.removeClass("fixed");
+                        navFixed = false;
+                    }
+                } else if (scrollTop > lastScrollTop) {
+                    if (navFixed) {
+                        $nav.removeClass("fixed");
+                        navFixed = false;
+                    }
+                } else {
+                    if (!navFixed) {
+                        $nav.addClass("fixed");
+                        $nav.hide().fadeIn(500);
+                        navFixed = true;
+                    }
+                }
+                lastScrollTop = scrollTop;
+                scrolled = false;
+            }
+        }, 200);
         /* google search */
         $("form[name=google_quick_search]").submit(function(event) {
             window.open('https://www.google.com/search?q=' + this.keyword.value + '+site:http%3A%2F%2F0.0.0.0%3A4000');
