@@ -58,13 +58,15 @@
             <a href="#top-of-page">Aspectran</a>
         </div>
         <div class="title-bar-right" data-toggle>
-            <button class="menu-icon" type="button"></button>
+            <a class="menu-icon" title="Menu"></a>
         </div>
     </div>
     <div class="top-bar" id="gnb-menu" style="display:none">
         <div class="row">
             <div class="top-bar-logo">
-                <a class="logo" href="/" title="Aspectran"><img src="http://www.aspectran.com/assets/img/aspectran-icon.png" alt="Aspectran"/></a>
+                <div class="circle">
+                    <a class="logo" href="/" title="Aspectran"><img src="http://www.aspectran.com/assets/img/aspectran-icon.png" alt="Aspectran"/></a>
+                </div>
             </div>
             <div class="top-bar-left">
                 <ul class="dropdown menu" data-dropdown-menu data-close-on-click-inside="false">
