@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.aspectran.demo.tts;
+package com.aspectran.demosite.tts;
 
 import com.aspectran.core.activity.Translet;
 import com.aspectran.core.component.bean.ablility.DisposableBean;
@@ -51,11 +51,11 @@ public class TextToSpeechBean implements InitializableBean, DisposableBean {
 
     private Voice voice;
 
-    private Float rate = 150.0F;
+    private Float rate = 145.0F;
 
-    private Float pitch = 100.0F;
+    private Float pitch = 95.0F;
 
-    private Float pitchRange = 12.0F;
+    private Float pitchRange = 14.0F;
 
     public void setVoicePackage(String voicePackage) {
         this.voicePackage = voicePackage;
@@ -168,6 +168,7 @@ public class TextToSpeechBean implements InitializableBean, DisposableBean {
             translet.getResponseAdapter().setStatus(413);
             return;
         }
+        translet.getResponseAdapter().setHeader("Content-Type", "audio/wav");
         OutputStream out = translet.getResponseAdapter().getOutputStream();
         out.write(DATA_URI_PREFIX);
         speak(text, out);

@@ -246,6 +246,11 @@
                     }
                 }
             },
+            error: function (xhr) {
+                if (xhr.status == '413') {
+                    alert("The text provided was too long.");
+                }
+            },
             complete: function () {
                 term.resume();
             }

@@ -1,0 +1,49 @@
+<!DOCTYPE aspectran PUBLIC "-//ASPECTRAN//DTD Aspectran Configuration 5.0//EN"
+                           "http://aspectran.github.io/dtd/aspectran-5.dtd">
+
+<aspectran>
+
+    <description>
+        Skylark is a text-to-speech web application.
+    </description>
+
+    <settings>
+        <setting name="transletNamePattern" value="/skylark/*"/>
+    </settings>
+
+    <bean id="voice1" class="com.aspectran.demosite.tts.TextToSpeechBean">
+        <properties>
+            <item name="properties" type="properties">
+                <value name="freetts.voices">com.sun.speech.freetts.en.us.cmu_us_kal.KevinVoiceDirectory</value>
+            </item>
+            <item name="voiceName">kevin16</item>
+        </properties>
+    </bean>
+
+    <bean id="skylark" class="com.aspectran.demosite.skylark.Skylark"/>
+
+    <translet name="/">
+        <dispatch name="templates/default">
+            <echo id="page">
+                <attributes>
+                    <item name="headline">Skylark</item>
+                    <item name="teaser">Skylark is a professional text to speech program that converts any written text into spoken words.</item>
+                    <item name="include">skylark/skylark</item>
+                </attributes>
+            </echo>
+        </dispatch>
+    </translet>
+
+    <translet name="/tts">
+        <request>
+            <parameters>
+                <item name="text" mandatory="true"/>
+            </parameters>
+        </request>
+        <action bean="skylark" method="textToSpeech"/>
+        <response>
+            <transform contentType="audio/wav;base64"/>
+        </response>
+    </translet>
+
+</aspectran>

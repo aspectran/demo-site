@@ -11,9 +11,9 @@
         <setting name="transletNamePattern" value="/examples/gs-rest-service/*"/>
     </settings>
 
-    <bean class="com.aspectran.demo.examples.customer.CustomerDao"/>
+    <bean class="com.aspectran.demosite.examples.customer.CustomerDao"/>
 
-    <bean class="com.aspectran.demo.examples.customer.CustomerAction"/>
+    <bean class="com.aspectran.demosite.examples.customer.CustomerAction"/>
 
     <translet name="/">
         <dispatch name="templates/default">
@@ -31,7 +31,7 @@
         <description>
             Returns a list of all customers in JSON format.
         </description>
-        <action id="customers" bean="class:com.aspectran.demo.examples.customer.CustomerAction" method="getCustomerList"/>
+        <action id="customers" bean="class:com.aspectran.demosite.examples.customer.CustomerAction" method="getCustomerList"/>
         <transform type="transform/json"/>
     </translet>
 
@@ -39,7 +39,7 @@
         <description>
             Retrieve customer info by a given id parameter.
         </description>
-        <action id="customer" bean="class:com.aspectran.demo.examples.customer.CustomerAction" method="getCustomer"/>
+        <action id="customer" bean="class:com.aspectran.demosite.examples.customer.CustomerAction" method="getCustomer"/>
         <transform type="transform/json"/>
     </translet>
 
@@ -47,7 +47,7 @@
         <description>
             Register a new customer.
         </description>
-        <action bean="class:com.aspectran.demo.examples.customer.CustomerAction" method="insertCustomer"/>
+        <action bean="class:com.aspectran.demosite.examples.customer.CustomerAction" method="insertCustomer"/>
         <transform type="transform/json"/>
     </translet>
 
@@ -55,7 +55,7 @@
         <description>
             Update customer info by a given id parameter.
         </description>
-        <action bean="class:com.aspectran.demo.examples.customer.CustomerAction" method="updateCustomer"/>
+        <action bean="class:com.aspectran.demosite.examples.customer.CustomerAction" method="updateCustomer"/>
         <transform type="transform/json"/>
     </translet>
 
@@ -63,7 +63,7 @@
         <description>
             Update customer's attributes by a given id parameter.
         </description>
-        <action id="result" bean="class:com.aspectran.demo.examples.customer.CustomerAction" method="updateAttributes"/>
+        <action id="result" bean="class:com.aspectran.demosite.examples.customer.CustomerAction" method="updateAttributes"/>
         <transform type="transform/json"/>
     </translet>
 
@@ -71,7 +71,7 @@
         <description>
             Delete customer info by a given id parameter.
         </description>
-        <action id="result" bean="class:com.aspectran.demo.examples.customer.CustomerAction" method="deleteCustomer"/>
+        <action id="result" bean="class:com.aspectran.demosite.examples.customer.CustomerAction" method="deleteCustomer"/>
         <transform type="transform/json"/>
     </translet>
 

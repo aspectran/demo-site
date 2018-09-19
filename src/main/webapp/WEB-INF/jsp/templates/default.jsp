@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
-    <title>${empty page.title ? "Aspectran Demo" : page.title}</title>
+    <title>${empty page.title ? "Aspectran Demo Site" : page.title}</title>
     <meta name="description" content="${empty page.description ? "Welcome to Aspectran Demo" : page.description}" />
     <link rel="stylesheet" type="text/css" href="http://www.aspectran.com/assets/css/styles_aspectran.css" />
     <link href="http://fonts.googleapis.com/css?family=Raleway:500,500i,700" rel="stylesheet">
@@ -71,7 +71,7 @@
             <div class="top-bar-left">
                 <ul class="dropdown menu" data-dropdown-menu data-close-on-click-inside="false">
                     <li>
-                        <a href="">Examples</a>
+                        <a href="/examples/hello-world">Examples</a>
                         <ul class="menu" data-submenu data-close-on-click-inside="false">
                             <li><a href="/examples/hello-world">Hello World</a></li>
                             <li><a href="/examples/gs-rest-service/">RESTful Web Service</a></li>
@@ -79,16 +79,10 @@
                         </ul>
                     </li>
                     <li>
-                        <a href="">Modules</a>
-                        <ul class="menu" data-submenu data-close-on-click-inside="false">
-                            <li><a href="/modules/webeditor">Web Editor</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="/guestbook">Guestbook</a>
-                    </li>
-                    <li>
                         <a href="/terminal/">Terminal</a>
+                    </li>
+                    <li>
+                        <a href="/skylark/">Skylark</a>
                     </li>
                 </ul>
             </div>

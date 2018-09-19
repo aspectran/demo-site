@@ -3,7 +3,7 @@
 
 <aspectran>
 
-    <bean id="speaker" class="com.aspectran.demo.tts.TextToSpeechBean">
+    <bean id="speaker" class="com.aspectran.demosite.tts.TextToSpeechBean">
         <properties>
             <item name="properties" type="properties">
                 <value name="freetts.voices">com.sun.speech.freetts.en.us.cmu_us_kal.KevinVoiceDirectory</value>

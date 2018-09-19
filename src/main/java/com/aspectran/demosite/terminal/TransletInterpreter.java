@@ -1,4 +1,4 @@
-package com.aspectran.demo.terminal;
+package com.aspectran.demosite.terminal;
 
 import com.aspectran.core.activity.Activity;
 import com.aspectran.core.activity.Translet;

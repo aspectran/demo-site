@@ -1,4 +1,4 @@
-package com.aspectran.demo.examples.upload;
+package com.aspectran.demosite.examples.upload;
 
 import com.aspectran.core.activity.Translet;
 import com.aspectran.core.activity.request.parameter.FileParameter;

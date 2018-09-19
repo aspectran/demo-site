@@ -1,4 +1,4 @@
-package com.aspectran.demo.examples.upload;
+package com.aspectran.demosite.examples.upload;
 
 import com.aspectran.core.component.bean.annotation.NonSerializable;
 import com.aspectran.core.util.ToStringBuilder;
