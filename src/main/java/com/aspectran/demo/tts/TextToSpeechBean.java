@@ -43,6 +43,8 @@ public class TextToSpeechBean implements InitializableBean, DisposableBean {
 
     private static final byte[] DATA_URI_PREFIX = "data:audio/wav;base64,".getBytes();
 
+    private static final int MAX_TEXT_BYTES = 256;
+
     private String voicePackage;
 
     private String voiceName;
@@ -159,6 +161,13 @@ public class TextToSpeechBean implements InitializableBean, DisposableBean {
 
     public void speak(Translet translet) throws IOException {
         String text = translet.getParameter("text");
+        if (text == null) {
+            return;
+        }
+        if (text.length() > MAX_TEXT_BYTES) {
+            translet.getResponseAdapter().setStatus(413);
+            return;
+        }
         OutputStream out = translet.getResponseAdapter().getOutputStream();
         out.write(DATA_URI_PREFIX);
         speak(text, out);
