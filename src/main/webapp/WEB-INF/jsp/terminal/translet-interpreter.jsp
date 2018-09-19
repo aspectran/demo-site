@@ -8,8 +8,8 @@
     }
 </style>
 <div id="term_demo" style="margin: 30px auto;"></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/1.22.4/js/jquery.terminal.min.js"></script>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/1.22.4/css/jquery.terminal.min.css" rel="stylesheet"/>
+<script src="https://cdn.rawgit.com/jcubic/jquery.terminal/master/js/jquery.terminal.min.js"></script>
+<link href="https://cdn.rawgit.com/jcubic/jquery.terminal/master/css/jquery.terminal.min.css" rel="stylesheet"/>
 <script>
     $(function() {
         $('#term_demo').terminal(function(command, term) {
