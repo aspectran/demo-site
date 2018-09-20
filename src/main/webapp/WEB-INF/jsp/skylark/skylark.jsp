@@ -1,13 +1,16 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <style>
+    section > .row {
+        background: #000;
+    }
     .terminal-wrapper textarea {
         box-shadow: none;
         min-height: initial;
         min-width: initial;
     }
 </style>
-<div id="skylark-term" style="margin: 30px auto;"></div>
+<div id="skylark-term"></div>
 <script src="https://cdn.rawgit.com/jcubic/jquery.terminal/master/js/jquery.terminal.min.js"></script>
 <link href="https://cdn.rawgit.com/jcubic/jquery.terminal/master/css/jquery.terminal.min.css" rel="stylesheet"/>
 <script>
@@ -22,10 +25,9 @@
                     },
                     method: 'POST',
                     dataType: 'text',
-                    success: function(data, status, xhr) {
-                        var contentType = xhr.getResponseHeader("content-type");
+                    success: function(data) {
                         if (data) {
-                            if (contentType == "audio/wav; base64=") {
+                            if (data.indexOf("data:audio/wav;base64,") === 0) {
                                 var html = "<audio controls autoplay>" +
                                     "<source src=\"" + data + "\" type='audio/wav'>" +
                                     "Your browser does not support the audio element.</audio>";
