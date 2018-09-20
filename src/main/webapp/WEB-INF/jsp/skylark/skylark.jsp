@@ -1,8 +1,8 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <style>
-    section > .row {
-        background: #000;
+    #skylark-term {
+        border-radius: 0 0 10px 10px;
     }
     .terminal-wrapper textarea {
         box-shadow: none;
