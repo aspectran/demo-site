@@ -4,6 +4,12 @@
     #skylark-term {
         border-radius: 0 0 10px 10px;
     }
+    @media print, screen and (min-width: 64em) {
+        section > .row {
+            background-color: #000;
+            border-radius: 0 0 10px 10px;
+        }
+    }
     .terminal-wrapper textarea {
         box-shadow: none;
         min-height: initial;
