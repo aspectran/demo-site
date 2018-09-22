@@ -3,34 +3,6 @@
 
 <aspectran>
 
-    <bean id="speaker" class="com.aspectran.demosite.tts.TextToSpeechBean">
-        <properties>
-            <item name="properties" type="properties">
-                <value name="freetts.voices">com.sun.speech.freetts.en.us.cmu_us_kal.KevinVoiceDirectory</value>
-            </item>
-            <item name="voiceName">kevin16</item>
-        </properties>
-    </bean>
-
-    <translet name="/speak">
-        <request>
-            <parameters>
-                <item name="text" mandatory="true"/>
-            </parameters>
-        </request>
-        <action bean="speaker" method="speak"/>
-        <response>
-            <transform contentType="audio/wav;base64"/>
-        </response>
-    </translet>
-
-    <translet name="/speak ${text}">
-        <action bean="speaker" method="speak"/>
-        <response>
-            <transform contentType="audio/wav;base64"/>
-        </response>
-    </translet>
-
     <translet name="/hello">
         <request>
             <parameters>
@@ -46,7 +18,7 @@
         </request>
         <transform type="transform/text">
             <template style="apon">
-                |----------------------------------------------------------
+                |--------------------------------------
                 |The parameters you entered are:
                 |   email: ${email}
                 |   password: ${password}
@@ -55,7 +27,7 @@
                 |   attr2: @{attr2}
                 |   attr3: @{attr3}
                 |   attr4: @{attr4}
-                |----------------------------------------------------------
+                |--------------------------------------
             </template>
         </transform>
     </translet>

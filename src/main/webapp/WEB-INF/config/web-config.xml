@@ -104,6 +104,5 @@
     <append file="/WEB-INF/config/examples/gs-rest-service.xml"/>
     <append file="/WEB-INF/config/examples/file-upload.xml"/>
     <append file="/WEB-INF/config/terminal/translet-interpreter.xml"/>
-    <append file="/WEB-INF/config/skylark/skylark.xml"/>
 
 </aspectran>
