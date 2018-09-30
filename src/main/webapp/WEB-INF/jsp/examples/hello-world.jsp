@@ -10,8 +10,8 @@
     border-top: 0;
   }
 </style>
-<div class="panel white b20">
-  <div class="undercon" style="text-align:center;font-size:100px;font-weight:bold;color:#ccc;padding:50px 0;">
+<div class="panel white">
+  <div class="undercon" style="text-align:center;font-size:100px;font-weight:bold;color:#4B4B4B;padding:50px 0;">
     <svg xmlns="http://www.w3.org/2000/svg"
       version="1.1"
       width="70%" viewBox="0 0 971 971"
@@ -20,7 +20,7 @@
       <style>
           .gear {
             stroke: #4B555A;
-            fill:	#707D83;
+            fill: #fff;
           }
       </style>
 
@@ -81,8 +81,8 @@
           -3285 c87 -247 119 -340 245 -705 75 -217 158 -456 185 -530 27 -74 78 -223
           115 -330 36 -107 130 -382 209 -610 l143 -415 -453 -3 c-250 -1 -658 -1 -908
           0 l-455 3 74 225 c84 259 324 994 426 1310 361 1109 377 1156 384 1148 2 -2
-          18 -44 35 -93z" fill="#ccc">
-          <animate dur="2s" values="#ccc; #4B555A; #ccc" keyTimes="0; 0.5; 1" attributeName="fill" repeatCount="indefinite"/>
+          18 -44 35 -93z" fill="#707D83">
+          <animate dur="2s" values="#707D83; #fff; #707D83" keyTimes="0; 0.5; 1" attributeName="fill" repeatCount="indefinite"/>
         </path>
       </g>
       <g transform="translate(595, 432) scale(2,-2)">
