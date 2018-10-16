@@ -74,7 +74,7 @@
             <plugin>
                 <groupId>com.google.appengine</groupId>
                 <artifactId>appengine-maven-plugin</artifactId>
-                <version>1.9.65</version>
+                <version>1.9.66</version>
                 <configuration>
                     <enableJarClasses>false</enableJarClasses>
                     <port>8081</port>
@@ -87,7 +87,7 @@
         <dependency>
             <groupId>com.aspectran</groupId>
             <artifactId>aspectran-web</artifactId>
-            <version>5.3.0</version>
+            <version>5.3.1</version>
         </dependency>
         <dependency>
             <groupId>commons-fileupload</groupId>
