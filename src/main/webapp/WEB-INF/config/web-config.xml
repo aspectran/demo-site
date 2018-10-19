@@ -5,7 +5,8 @@
 
     <description>
         An Aspectran configuration for Web Application Service.
-        Note that the name of the Translet corresponding to the request URI always starts with a forward slash (/).
+        Note that the name of the Translet corresponding to the request URI
+        always starts with a forward slash (/).
     </description>
 
     <bean id="jspViewDispatcher" class="com.aspectran.web.support.view.JspViewDispatcher">
