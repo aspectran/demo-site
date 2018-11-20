@@ -160,8 +160,8 @@
     </div>
     <div class="row">
         <div class="large-12 columns">
-            <c:if test="${not empty page.include}">
-                <jsp:include page="/WEB-INF/jsp/${page.include}.jsp"/>
+            <c:if test="${not empty page.path}">
+                <jsp:include page="/WEB-INF/jsp/${page.path}.jsp"/>
             </c:if>
         </div>
     </div>
@@ -430,11 +430,5 @@
         $(".external").attr('target','_blank');
     })
 </script>
-<script type="text/javascript">
-    function googleTranslateElementInit() {
-        new google.translate.TranslateElement({pageLanguage: 'en', autoDisplay: false, multilanguagePage: true, gaTrack: true, gaId: 'UA-66807210-2'}, 'google_translate_element');
-    }
-</script>
-<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>

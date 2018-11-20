@@ -1,5 +1,5 @@
 <!DOCTYPE aspectran PUBLIC "-//ASPECTRAN//DTD Aspectran Configuration 5.0//EN"
-                           "http://aspectran.github.io/dtd/aspectran-5.dtd">
+        "http://aspectran.github.io/dtd/aspectran-5.dtd">
 
 <aspectran>
 
@@ -42,19 +42,18 @@
     </bean>
 
     <translet name="/">
+        <echo id="page">
+            <attributes>
+                <item name="headline">Uploading Files</item>
+                <item name="teaser">
+                    This guide walks you through the process of creating a server application that can receive
+                    HTTP multi-part file uploads.</item>
+                <item name="path">examples/file-upload</item>
+                <item name="maxFiles">#{class:com.aspectran.demosite.examples.upload.SimpleFileUploadAction^maxFiles}</item>
+            </attributes>
+        </echo>
         <action id="files" bean="class:com.aspectran.demosite.examples.upload.SimpleFileUploadAction" method="list"/>
-        <dispatch name="templates/default">
-            <echo id="page">
-                <attributes>
-                    <item name="headline">Uploading Files</item>
-                    <item name="teaser">
-                        This guide walks you through the process of creating a server application that can receive
-                        HTTP multi-part file uploads.</item>
-                    <item name="include">examples/file-upload</item>
-                    <item name="maxFiles">#{class:com.aspectran.demosite.examples.upload.SimpleFileUploadAction^maxFiles}</item>
-                </attributes>
-            </echo>
-        </dispatch>
+        <dispatch name="templates/default"/>
     </translet>
 
 </aspectran>

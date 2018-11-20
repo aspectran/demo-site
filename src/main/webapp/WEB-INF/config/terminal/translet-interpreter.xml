@@ -1,5 +1,5 @@
 <!DOCTYPE aspectran PUBLIC "-//ASPECTRAN//DTD Aspectran Configuration 5.0//EN"
-                           "http://aspectran.github.io/dtd/aspectran-5.dtd">
+        "http://aspectran.github.io/dtd/aspectran-5.dtd">
 
 <aspectran>
 
@@ -12,15 +12,14 @@
     </settings>
 
     <translet name="/">
-        <dispatch name="templates/default">
-            <echo id="page">
-                <attributes>
-                    <item name="headline">Translet Interpreter</item>
-                    <item name="teaser">You can run translets with a command line interpreter implemented using the jQuery Terminal Emulator.</item>
-                    <item name="include">terminal/translet-interpreter</item>
-                </attributes>
-            </echo>
-        </dispatch>
+        <echo id="page">
+            <attributes>
+                <item name="headline">Translet Interpreter</item>
+                <item name="teaser">You can run translets with a command line interpreter implemented using the jQuery Terminal Emulator.</item>
+                <item name="path">terminal/translet-interpreter</item>
+            </attributes>
+        </echo>
+        <dispatch name="templates/default"/>
     </translet>
 
     <append file="/WEB-INF/config/terminal/terminal-commands.xml"/>
