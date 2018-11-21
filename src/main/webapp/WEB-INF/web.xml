@@ -46,7 +46,6 @@
     <listener>
         <listener-class>com.aspectran.web.startup.listener.AspectranServiceListener</listener-class>
     </listener>
-    <!--
     <filter>
         <filter-name>web-activity-filter</filter-name>
         <filter-class>com.aspectran.web.startup.filter.WebActivityFilter</filter-class>
@@ -62,7 +61,6 @@
         <url-pattern>/</url-pattern>
         <servlet-name>web-activity-servlet</servlet-name>
     </filter-mapping>
-    -->
     <servlet>
         <servlet-name>web-activity-servlet</servlet-name>
         <servlet-class>com.aspectran.web.startup.servlet.WebActivityServlet</servlet-class>
