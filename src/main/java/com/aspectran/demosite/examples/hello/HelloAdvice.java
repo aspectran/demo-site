@@ -23,7 +23,7 @@ public class HelloAdvice {
 
     private final Log log = LogFactory.getLog(HelloAdvice.class);
 
-    public String welcome(Translet translet) {
+    public String welcome() {
         String msg = "Welcome to Aspectran!";
 
         log.info(msg);
@@ -32,7 +32,7 @@ public class HelloAdvice {
     }
 
     public String goodbye(Translet translet) {
-        log.info("activityDataMap " + translet.getActivityDataMap(true));
+        log.info("activityDataMap " + translet.getActivityDataMap());
 
         String msg = "Goodbye!";
 
