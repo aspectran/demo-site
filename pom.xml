@@ -31,9 +31,11 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.0</version>
                 <configuration>
+                    <fork>true</fork>
+                    <debug>true</debug>
                     <optimize>true</optimize>
-                    <!-- Slightly faster builds, see https://issues.apache.org/jira/browse/MCOMPILER-209 -->
-                    <useIncrementalCompilation>false</useIncrementalCompilation>
+                    <showDeprecation>true</showDeprecation>
+                    <showWarnings>true</showWarnings>
                 </configuration>
             </plugin>
             <plugin>
