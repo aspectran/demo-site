@@ -4,9 +4,9 @@ import com.aspectran.core.activity.Translet;
 import com.aspectran.core.activity.request.FileParameter;
 import com.aspectran.core.component.bean.annotation.Action;
 import com.aspectran.core.component.bean.annotation.Component;
-import com.aspectran.core.component.bean.annotation.RequestAsDelete;
-import com.aspectran.core.component.bean.annotation.RequestAsGet;
-import com.aspectran.core.component.bean.annotation.RequestAsPost;
+import com.aspectran.core.component.bean.annotation.RequestToDelete;
+import com.aspectran.core.component.bean.annotation.RequestToGet;
+import com.aspectran.core.component.bean.annotation.RequestToPost;
 import com.aspectran.core.component.bean.annotation.Transform;
 import com.aspectran.core.context.rule.type.TransformType;
 import com.aspectran.core.util.FilenameUtils;
@@ -69,8 +69,8 @@ public class SimpleFileUploadAction {
         }
     }
 
-    @RequestAsPost("/files")
-    @Transform(type = TransformType.JSON)
+    @RequestToPost("/files")
+    @Transform(TransformType.JSON)
     @Action(id = "files")
     public Collection upload(Translet translet) throws IOException {
         if (!translet.getRequestAdapter().isMaxLengthExceeded()) {
@@ -100,7 +100,7 @@ public class SimpleFileUploadAction {
         return null;
     }
 
-    @RequestAsGet("/files/${key}")
+    @RequestToGet("/files/${key}")
     public void serve(Translet translet) throws IOException {
         String key = translet.getParameter("key");
         UploadedFile uploadedFile = uploadedFiles.get(key);
@@ -113,7 +113,7 @@ public class SimpleFileUploadAction {
         }
     }
 
-    @RequestAsDelete("/files/${key}")
+    @RequestToDelete("/files/${key}")
     public void delete(Translet translet) {
         String key = translet.getParameter("key");
         UploadedFile removedFile = removeUploadedFile(key);
@@ -122,8 +122,8 @@ public class SimpleFileUploadAction {
         }
     }
 
-    @RequestAsGet("/files")
-    @Transform(type = TransformType.JSON)
+    @RequestToGet("/files")
+    @Transform(TransformType.JSON)
     @Action(id = "files")
     public Collection list() {
         return uploadedFiles.values();

@@ -4,8 +4,8 @@ import com.aspectran.core.activity.Activity;
 import com.aspectran.core.activity.Translet;
 import com.aspectran.core.component.bean.annotation.Bean;
 import com.aspectran.core.component.bean.annotation.Component;
-import com.aspectran.core.component.bean.annotation.RequestAsGet;
-import com.aspectran.core.component.bean.annotation.RequestAsPost;
+import com.aspectran.core.component.bean.annotation.RequestToGet;
+import com.aspectran.core.component.bean.annotation.RequestToPost;
 import com.aspectran.core.component.bean.annotation.Transform;
 import com.aspectran.core.component.bean.aware.ActivityContextAware;
 import com.aspectran.core.component.translet.TransletNotFoundException;
@@ -47,7 +47,7 @@ public class TransletInterpreter implements ActivityContextAware {
         this.context = context;
     }
 
-    @RequestAsGet("/query/@{_translet_}")
+    @RequestToGet("/query/@{_translet_}")
     @Transform(type = TransformType.TEXT, contentType = "application/json")
     public void query(Translet translet) throws IOException, InvocationTargetException {
         String transletName = translet.getAttribute("_translet_");
@@ -120,7 +120,7 @@ public class TransletInterpreter implements ActivityContextAware {
         jsonWriter.closeCurlyBracket();
     }
 
-    @RequestAsPost("/exec/@{_translet_}")
+    @RequestToPost("/exec/@{_translet_}")
     public void execute(Translet translet) {
         String transletName = translet.getAttribute("_translet_");
         if (StringUtils.isEmpty(transletName)) {
