@@ -27,10 +27,14 @@ import java.util.List;
 @Bean
 public class CustomerAction {
     
-    @Autowired
     private CustomerDao dao;
-    
-    public List<Customer> getCustomerList(Translet translet) {
+
+    @Autowired
+    public CustomerAction(CustomerDao dao) {
+        this.dao = dao;
+    }
+
+    public List<Customer> getCustomerList() {
         return dao.getCustomerList();
     }
 
