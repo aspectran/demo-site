@@ -4,6 +4,7 @@ import com.aspectran.core.component.bean.annotation.NonSerializable;
 import com.aspectran.core.util.ToStringBuilder;
 import com.aspectran.core.util.json.JsonWriter;
 
+import java.io.IOException;
 import java.util.UUID;
 
 /**
@@ -101,7 +102,11 @@ public class UploadedFile {
         uploadedFile.setFileSize(11);
         uploadedFile.setFileType("jpg");
 
-        System.out.println(JsonWriter.stringify(uploadedFile));
+        try {
+            System.out.println(JsonWriter.stringify(uploadedFile));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
