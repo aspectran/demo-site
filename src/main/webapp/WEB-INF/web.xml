@@ -19,7 +19,6 @@
                 scan: [
                     com.aspectran.demosite
                 ]
-                hybridLoad: false
                 autoReload: {
                     reloadMode: hard
                     scanIntervalSeconds: 5
