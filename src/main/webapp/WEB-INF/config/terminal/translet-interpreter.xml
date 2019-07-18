@@ -8,16 +8,14 @@
     </description>
 
     <settings>
-        <setting name="transletNamePattern" value="/terminal/*"/>
+        <setting name="transletNamePrefix" value="/terminal/"/>
     </settings>
 
     <translet name="/">
         <echo id="page">
-            <attributes>
-                <item name="headline">Translet Interpreter</item>
-                <item name="teaser">You can run translets with a command line interpreter implemented using the jQuery Terminal Emulator.</item>
-                <item name="path">terminal/translet-interpreter</item>
-            </attributes>
+            <item name="headline">Translet Interpreter</item>
+            <item name="teaser">You can run translets with a command line interpreter implemented using the jQuery Terminal Emulator.</item>
+            <item name="path">terminal/translet-interpreter</item>
         </echo>
         <dispatch name="templates/default"/>
     </translet>
