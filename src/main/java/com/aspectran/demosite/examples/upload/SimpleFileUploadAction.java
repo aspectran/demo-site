@@ -28,10 +28,10 @@ import java.util.UUID;
 /**
  * <p>Created: 2018. 7. 9.</p>
  */
-@Component(namespace = "/examples/file-upload")
+@Component("/examples/file-upload")
 public class SimpleFileUploadAction {
 
-    private Log log = LogFactory.getLog(SimpleFileUploadAction.class);
+    private static final Log log = LogFactory.getLog(SimpleFileUploadAction.class);
 
     private final Map<String, UploadedFile> uploadedFiles = new LinkedHashMap<>();
 

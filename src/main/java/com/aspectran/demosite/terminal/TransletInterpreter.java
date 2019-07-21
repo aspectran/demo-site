@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@Component(namespace = "/terminal")
+@Component("/terminal")
 @Bean(id = "transletInterpreter")
 public class TransletInterpreter implements ActivityContextAware {
 

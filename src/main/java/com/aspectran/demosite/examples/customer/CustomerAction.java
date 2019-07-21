@@ -19,103 +19,93 @@ import com.aspectran.core.activity.Translet;
 import com.aspectran.core.component.bean.annotation.Autowired;
 import com.aspectran.core.component.bean.annotation.Bean;
 import com.aspectran.core.component.bean.annotation.Component;
-import com.aspectran.web.support.http.HttpStatusSetter;
+import com.aspectran.core.component.bean.annotation.Description;
+import com.aspectran.core.component.bean.annotation.RequestToDelete;
+import com.aspectran.core.component.bean.annotation.RequestToGet;
+import com.aspectran.core.component.bean.annotation.RequestToPost;
+import com.aspectran.core.component.bean.annotation.RequestToPut;
+import com.aspectran.core.component.bean.annotation.Required;
+import com.aspectran.web.activity.response.DefaultRestResponse;
+import com.aspectran.web.activity.response.RestResponse;
 
 import java.util.List;
 
-@Component
+@Component("examples.gs-rest-service")
 @Bean
 public class CustomerAction {
-    
-    private CustomerDao dao;
+
+    private final CustomerRepository repository;
 
     @Autowired
-    public CustomerAction(CustomerDao dao) {
-        this.dao = dao;
+    public CustomerAction(CustomerRepository repository) {
+        this.repository = repository;
     }
 
-    public List<Customer> getCustomerList() {
-        return dao.getCustomerList();
+    @RequestToGet("/customers")
+    @Description("Returns list of all customers in JSON format.")
+    public RestResponse getCustomerList() {
+        List<Customer> list = repository.getCustomerList();
+        return new DefaultRestResponse("customers", list).ok();
     }
 
-    public Customer getCustomer(Translet translet) {
-        int id = Integer.parseInt(translet.getParameter("id"));
-
-        Customer customer = dao.getCustomer(id);
-        
-        if(customer == null) {
-            HttpStatusSetter.notFound(translet);
-            return null;
+    @RequestToGet("/customers/${id:guest}")
+    @Description("Retrieves a customer by ID.")
+    public RestResponse getCustomer(@Required Integer id) {
+        Customer customer = repository.getCustomer(id);
+        RestResponse response = new DefaultRestResponse();
+        if (customer != null) {
+            response.setData("customer", customer);
+        } else {
+            response.notFound();
         }
-
-        return customer;
+        return response;
     }
-    
-    public Customer insertCustomer(Translet translet) {
-        String name = translet.getParameter("name");
-        int age = Integer.valueOf(translet.getParameter("age"));
-        boolean approved = "Y".equals(translet.getParameter("approved"));
-        
-        Customer customer = new Customer();
-        customer.putValue(Customer.name, name);
-        customer.putValue(Customer.age, age);
-        customer.putValue(Customer.approved, approved);
-        
-        int id = dao.insertCustomer(customer);
-        
+
+    @RequestToPost("/customers")
+    @Description("Add a new customer to the repository.")
+    public RestResponse addCustomer(Translet translet, @Required Customer customer) {
+        int id = repository.insertCustomer(customer);
         String resourceUri = translet.getRequestName() + "/" + id;
-        HttpStatusSetter.created(translet, resourceUri);
-
-        return customer;
-    }
-    
-    public Customer updateCustomer(Translet translet) {
-        int id = Integer.parseInt(translet.getParameter("id"));
-        String name = translet.getParameter("name");
-        int age = Integer.valueOf(translet.getParameter("age"));
-        boolean approved = "Y".equals(translet.getParameter("approved"));
-
-        Customer customer = new Customer();
-        customer.putValue(Customer.id, id);
-        customer.putValue(Customer.name, name);
-        customer.putValue(Customer.age, age);
-        customer.putValue(Customer.approved, approved);
-
-        boolean updated = dao.updateCustomer(customer);
-
-        if(!updated) {
-            HttpStatusSetter.notFound(translet);
-            return null;
-        }
-
-        return customer;
+        return new DefaultRestResponse(customer).created(resourceUri);
     }
 
-    public boolean deleteCustomer(Translet translet) {
-        int id = Integer.parseInt(translet.getParameter("id"));
-
-        boolean deleted = dao.deleteCustomer(id);
-
-        if(!deleted) {
-            HttpStatusSetter.notFound(translet);
-            return false;
+    @RequestToPut("/customers/${id}")
+    @Description("Updates an existing customer in the repository with form data.")
+    public RestResponse updateCustomer(@Required Customer customer) {
+        boolean updated = repository.updateCustomer(customer);
+        RestResponse response = new DefaultRestResponse();
+        if (updated) {
+            response.setData("customer", customer);
+        } else {
+            response.notFound();
         }
-
-        return true;
+        return response;
     }
 
-    public boolean updateAttributes(Translet translet) {
-        int id = Integer.parseInt(translet.getParameter("id"));
-        boolean approved = Boolean.parseBoolean(translet.getParameter("approved"));
-
-        boolean updated = dao.approve(id, approved);
-
-        if(!updated) {
-            HttpStatusSetter.notFound(translet);
-            return false;
+    @RequestToDelete("/customers/${id}")
+    @Description("Deletes a customer by ID.")
+    public RestResponse deleteCustomer(@Required Integer id) {
+        boolean deleted = repository.deleteCustomer(id);
+        RestResponse response = new DefaultRestResponse();
+        if (deleted) {
+            response.setData("result", Boolean.TRUE);
+        } else {
+            response.notFound();
         }
+        return response;
+    }
 
-        return true;
+    @RequestToPut("/customers/${id}/attributes")
+    @Description("Updates an existing customer's attributes.")
+    public RestResponse updateAttributes(@Required Integer id, @Required Boolean approved) {
+        boolean updated = repository.approve(id, approved);
+        RestResponse response = new DefaultRestResponse();
+        if (updated) {
+            response.setData("result", Boolean.TRUE);
+        } else {
+            response.notFound();
+        }
+        return response;
     }
 
 }
