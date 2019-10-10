@@ -81,6 +81,9 @@
                     <li>
                         <a href="/terminal/">Terminal</a>
                     </li>
+                    <li>
+                        <a href="/chat/">Chat</a>
+                    </li>
                 </ul>
             </div>
             <div class="top-bar-right">

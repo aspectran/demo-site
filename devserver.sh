@@ -1,3 +1,3 @@
 #!/bin/sh
 
-mvn clean package appengine:devserver
+mvn clean package jetty:run
