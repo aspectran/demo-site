@@ -4,4 +4,7 @@
   <version>1</version>
   <threadsafe>true</threadsafe>
   <runtime>java8</runtime>
+  <system-properties>
+    <property name="JETTY_MODULES_ENABLE" value="websocket" />
+  </system-properties>
 </appengine-web-app>
