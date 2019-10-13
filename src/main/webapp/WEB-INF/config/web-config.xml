@@ -38,7 +38,7 @@
         <properties>
             <item name="allowedOrigins" type="set">
                 <value>http://demo.aspectran.com</value>
-                <value>http://www.aspectran.com</value>
+                <value>https://aspectran.com</value>
                 <value>http://localhost:8081</value>
                 <value>http://localhost</value>
                 <value>http://127.0.0.1</value>
@@ -107,6 +107,5 @@
     <append file="/WEB-INF/config/examples/gs-rest-service.xml"/>
     <append file="/WEB-INF/config/examples/file-upload.xml"/>
     <append file="/WEB-INF/config/terminal/translet-interpreter.xml"/>
-    <append file="/WEB-INF/config/chat/chat.xml"/>
 
 </aspectran>

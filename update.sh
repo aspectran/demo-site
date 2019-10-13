@@ -1,3 +1,3 @@
 #!/bin/sh
 
-mvn clean package appengine:deploy
+mvn clean package appengine:update

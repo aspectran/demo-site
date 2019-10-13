@@ -23,16 +23,13 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <failOnMissingWebXml>false</failOnMissingWebXml> <!-- REQUIRED -->
-        <aspectran.version>6.4.0-M2-SNAPSHOT</aspectran.version>
-        <appengine.maven.plugin>2.1.0</appengine.maven.plugin>
-        <jetty.version>9.4.4.v20170414</jetty.version>
+        <aspectran.version>6.4.0-M2</aspectran.version>
+        <appengine.target.version>1.9.76</appengine.target.version>
         <slf4j.version>1.7.28</slf4j.version>
         <logback.version>1.2.3</logback.version>
     </properties>
     <build>
-        <!-- for hot reload of the web application -->
-        <outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</outputDirectory>
+        <outputDirectory>src/main/webapp/WEB-INF/classes</outputDirectory>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -54,21 +51,57 @@
                     </excludes>
                 </configuration>
             </plugin>
-            <!-- for deployment of web application -->
             <plugin>
-                <groupId>com.google.cloud.tools</groupId>
-                <artifactId>appengine-maven-plugin</artifactId>
-                <version>${appengine.maven.plugin}</version>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.1.0</version>
                 <configuration>
-                    <deploy.projectId>aspectran-demo</deploy.projectId>
-                    <deploy.version>1</deploy.version>
+                    <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                    <filesets>
+                        <fileset>
+                            <directory>target/</directory>
+                        </fileset>
+                        <fileset>
+                            <directory>src/main/webapp/WEB-INF/lib</directory>
+                            <includes>
+                                <include>*.jar</include>
+                            </includes>
+                        </fileset>
+                    </filesets>
                 </configuration>
             </plugin>
-            <!-- for local testing of web application -->
             <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-                <version>${jetty.version}</version>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.1.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>src/main/webapp/WEB-INF/lib</outputDirectory>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.2.3</version>
+                <configuration>
+                    <archiveClasses>true</archiveClasses>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.google.appengine</groupId>
+                <artifactId>appengine-maven-plugin</artifactId>
+                <version>${appengine.target.version}</version>
+                <configuration>
+                    <enableJarClasses>false</enableJarClasses>
+                    <port>8081</port>
+                    <address>0.0.0.0</address>
+                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -122,12 +155,6 @@
             <version>3.1.0</version>
             <type>jar</type>
             <scope>provided</scope>
-        </dependency>
-        <!--Jetty JSR-356 Websocket client side dependency-->
-        <dependency>
-            <groupId>org.eclipse.jetty.websocket</groupId>
-            <artifactId>javax-websocket-client-impl</artifactId>
-            <version>${jetty.version}</version>
         </dependency>
     </dependencies>
 </project>
