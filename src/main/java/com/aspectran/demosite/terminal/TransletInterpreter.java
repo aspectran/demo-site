@@ -1,6 +1,22 @@
+/*
+ * Copyright (c) 2008-2019 The Aspectran Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.aspectran.demosite.terminal;
 
-import com.aspectran.core.activity.Activity;
+import com.aspectran.core.activity.ActivityException;
+import com.aspectran.core.activity.InstantActivity;
 import com.aspectran.core.activity.Translet;
 import com.aspectran.core.activity.TransletNotFoundException;
 import com.aspectran.core.component.bean.annotation.Bean;
@@ -15,6 +31,7 @@ import com.aspectran.core.context.expr.token.TokenParser;
 import com.aspectran.core.context.rule.ItemRule;
 import com.aspectran.core.context.rule.ItemRuleMap;
 import com.aspectran.core.context.rule.TransletRule;
+import com.aspectran.core.context.rule.type.MethodType;
 import com.aspectran.core.context.rule.type.TokenType;
 import com.aspectran.core.context.rule.type.TransformType;
 import com.aspectran.core.util.StringUtils;
@@ -32,10 +49,10 @@ import java.util.Map;
 import java.util.Set;
 
 @Component("/terminal")
-@Bean(id = "transletInterpreter")
+@Bean("transletInterpreter")
 public class TransletInterpreter implements ActivityContextAware {
 
-    private static final Log log = LogFactory.getLog(TransletInterpreter.class);
+    private final Log log = LogFactory.getLog(TransletInterpreter.class);
 
     private static final String COMMAND_PREFIX = "/terminal/";
 
@@ -55,7 +72,6 @@ public class TransletInterpreter implements ActivityContextAware {
         }
 
         String transletFullName = COMMAND_PREFIX + transletName;
-
         TransletRule transletRule = context.getTransletRuleRegistry().getTransletRule(transletFullName);
         if (transletRule == null) {
             if (log.isDebugEnabled()) {
@@ -119,18 +135,24 @@ public class TransletInterpreter implements ActivityContextAware {
             return;
         }
 
-        String transletFullName = COMMAND_PREFIX + transletName;
-
-        TransletRule transletRule = context.getTransletRuleRegistry().getTransletRule(transletFullName);
-        if (transletRule == null) {
-            throw new TransletNotFoundException(transletName);
+        try {
+            performActivity(transletName);
+        } catch (ActivityException e) {
+            log.error("Failed to execute translet: " + transletName, e);
         }
-
-        performActivity(transletFullName, transletRule);
     }
 
-    private void performActivity(String transletName, TransletRule transletRule) {
-        Activity activity = context.getCurrentActivity().newActivity();
+    private void performActivity(String transletName) throws ActivityException {
+        String transletFullName = COMMAND_PREFIX + transletName;
+        TransletRule transletRule = context.getTransletRuleRegistry().getTransletRule(transletFullName);
+        if (transletRule == null) {
+            throw new TransletNotFoundException(transletName, MethodType.GET);
+        }
+
+        InstantActivity activity = new InstantActivity(context);
+        activity.setSessionAdapter(context.getCurrentActivity().getSessionAdapter());
+        activity.setRequestAdapter(context.getCurrentActivity().getRequestAdapter());
+        activity.setResponseAdapter(context.getCurrentActivity().getResponseAdapter());
         activity.prepare(transletName, transletRule);
         activity.perform();
     }

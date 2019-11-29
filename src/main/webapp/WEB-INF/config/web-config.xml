@@ -36,8 +36,10 @@
     <bean id="corsProcessor" class="com.aspectran.web.support.cors.DefaultCorsProcessor">
         <properties>
             <item name="allowedOrigins" type="set">
+                <value>https://demo.aspectran.com</value>
                 <value>http://demo.aspectran.com</value>
                 <value>https://aspectran.com</value>
+                <value>http://aspectran.com</value>
                 <value>http://localhost:8081</value>
                 <value>http://localhost</value>
                 <value>http://127.0.0.1</value>
