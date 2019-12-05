@@ -16,12 +16,18 @@
 package com.aspectran.demosite.examples.hello;
 
 import com.aspectran.core.activity.Translet;
+import com.aspectran.core.component.bean.annotation.Bean;
+import com.aspectran.core.component.bean.annotation.Component;
+import com.aspectran.core.component.bean.annotation.Description;
 import com.aspectran.core.util.logging.Log;
 import com.aspectran.core.util.logging.LogFactory;
 
+@Component
+@Bean("helloAdvice")
+@Description("Defines the Advice Bean that has the Advice Method to be injected before and after the Action Method.")
 public class HelloAdvice {
 
-    private final Log log = LogFactory.getLog(HelloAdvice.class);
+    private static final Log log = LogFactory.getLog(HelloAdvice.class);
 
     public String welcome() {
         String msg = "Welcome to Aspectran!";

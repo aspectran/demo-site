@@ -1,10 +1,11 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!doctype html>
 <html class="no-js" lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <meta name="google" content="notranslate">
     <title>${empty page.title ? "Aspectran Demo Site" : page.title}</title>
     <meta name="description" content="${empty page.description ? "Welcome to Aspectran Demo" : page.description}" />
     <link rel="stylesheet" type="text/css" href="https://aspectran.com/assets/css/styles_aspectran.css" />
@@ -157,13 +158,9 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="large-12 columns">
-            <c:if test="${not empty page.path}">
-                <jsp:include page="/WEB-INF/jsp/${page.path}.jsp"/>
-            </c:if>
-        </div>
-    </div>
+    <c:if test="${not empty page.include}">
+        <jsp:include page="/WEB-INF/jsp/${page.include}.jsp"/>
+    </c:if>
 </section>
 <div id="up-to-top" class="row">
     <div class="small-12 columns" style="text-align: right;">
@@ -303,10 +300,9 @@
         $(".lazy-sticky").each(function() {
             var $win = $(window);
             var $this = $(this);
-            var topNavHeight = 60;
             var upToTopHeight = $("#up-to-top").height() + 30 + 60;
             var footerHeight = $("#footer-content").height() + upToTopHeight;
-            var baseOffsetTop = $this.offset().top - topNavHeight;
+            var baseOffsetTop = $this.offset().top;
             var offsetTop = 0;
             var thisHeight = $this.height();
             var winHeight = $win.height();
@@ -320,9 +316,9 @@
                         var offset = $("#" + anchor).offset();
                         if(offset) {
                             immediate = true;
-                            $win.scrollTop(offset.top - topNavHeight);
+                            $win.scrollTop(offset.top - $("#navigation.fixed .top-bar").height()||0);
                         }
-                    }, 100);
+                    }, 300);
                 }
             });
             $win.scroll(function() {
@@ -344,7 +340,9 @@
                         immediate = false;
                     }, immediate ? 250 : 500);
                 } else {
-                    if(immediate || (scrollTop > baseOffsetTop + offsetTop + thisHeight - 20) || (scrollTop < baseOffsetTop + offsetTop)) {
+                    var topBarHeight = $("#navigation.fixed .top-bar").height()||0;
+                    if(immediate || (scrollTop > baseOffsetTop + topBarHeight + offsetTop + thisHeight - 20) ||
+                        (scrollTop < baseOffsetTop + topBarHeight + offsetTop)) {
                         var tocOffsetLeftBase = $this.offset().left;
                         if(tocOffsetLeftBase > 100) {
                             if(scrollTimer) {
@@ -352,14 +350,15 @@
                                 scrollTimer = null;
                             }
                             scrollTimer = setInterval(function() {
+                                topBarHeight = $("#navigation.fixed .top-bar").height()||0;
                                 scrollTop = $win.scrollTop();
-                                if(scrollTop < baseOffsetTop) {
+                                if(scrollTop < baseOffsetTop + topBarHeight) {
                                     scrollTop = 0;
                                 } else {
-                                    scrollTop = scrollTop - baseOffsetTop + 10;
+                                    scrollTop = scrollTop - baseOffsetTop + topBarHeight + 10;
                                 }
-                                if(scrollTop > $(document).height() - footerHeight - thisHeight - baseOffsetTop - topNavHeight) {
-                                    scrollTop = $(document).height() - footerHeight - thisHeight - baseOffsetTop - topNavHeight;
+                                if(scrollTop > $(document).height() - footerHeight - thisHeight - baseOffsetTop + topBarHeight) {
+                                    scrollTop = $(document).height() - footerHeight - thisHeight - baseOffsetTop + topBarHeight;
                                 }
                                 offsetTop = scrollTop;
                                 $this.css({

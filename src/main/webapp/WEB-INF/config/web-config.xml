@@ -103,7 +103,7 @@
         </exception>
     </translet>
 
-    <append file="/WEB-INF/config/front/main.xml"/>
+    <append file="/WEB-INF/config/home/main.xml"/>
     <append file="/WEB-INF/config/examples/hello-world.xml"/>
     <append file="/WEB-INF/config/examples/gs-rest-service.xml"/>
     <append file="/WEB-INF/config/examples/file-upload.xml"/>

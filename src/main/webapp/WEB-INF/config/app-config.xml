@@ -9,5 +9,6 @@
 
     <append file="/WEB-INF/config/common-config.xml"/>
     <append file="/WEB-INF/config/web-config.xml"/>
+    <append file="/WEB-INF/config/shell/shell-config.xml"/>
 
 </aspectran>

@@ -16,7 +16,11 @@
         min-width: initial;
     }
 </style>
-<div id="term-demo"></div>
+<div class="row">
+    <div class="columns large-12">
+        <div id="term-demo"></div>
+    </div>
+</div>
 <script src="https://cdn.rawgit.com/jcubic/jquery.terminal/master/js/jquery.terminal.min.js"></script>
 <link href="https://cdn.rawgit.com/jcubic/jquery.terminal/master/css/jquery.terminal.min.css" rel="stylesheet"/>
 <script>
@@ -132,6 +136,9 @@
         }
         term.push(function (value, term) {
             var token = prompt.token;
+            if (!value && token.defaultValue) {
+                value = token.defaultValue;
+            }
             var mandatory = token.mandatory;
             if (mandatory && value === '') {
                 prompt.done = false;

@@ -15,12 +15,19 @@
  */
 package com.aspectran.demosite.examples.hello;
 
+import com.aspectran.core.component.bean.annotation.Bean;
+import com.aspectran.core.component.bean.annotation.Component;
+import com.aspectran.core.component.bean.annotation.Description;
+import com.aspectran.core.context.rule.type.ScopeType;
 import com.aspectran.core.util.logging.Log;
 import com.aspectran.core.util.logging.LogFactory;
 
+@Component
+@Bean(id = "helloAction", scope = ScopeType.SESSION)
+@Description("Defines a Hello Action Bean that contains the helloWorld() method.")
 public class HelloAction {
 
-    private final Log log = LogFactory.getLog(HelloAction.class);
+    private static final Log log = LogFactory.getLog(HelloAction.class);
 
     public String helloWorld() {
         String msg = "Hello, World!";

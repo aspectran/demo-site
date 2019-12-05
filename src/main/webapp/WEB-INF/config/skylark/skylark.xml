@@ -15,7 +15,7 @@
         <echo id="page">
             <item name="headline">Skylark Terminal</item>
             <item name="teaser">Skylark is a text to speech program that converts any written text into spoken words.</item>
-            <item name="path">skylark/skylark</item>
+            <item name="include">skylark/skylark</item>
         </echo>
         <dispatch name="templates/default"/>
     </translet>
