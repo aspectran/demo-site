@@ -14,18 +14,13 @@
         </contributor>
     </contributors>
     <properties>
-        <main.basedir>${project.basedir}</main.basedir>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.compiler.testTarget>1.8</maven.compiler.testTarget>
-        <maven.compiler.testSource>1.8</maven.compiler.testSource>
-        <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ssZ</maven.build.timestamp.format>
+        <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <aspectran.version>6.6.0-M3</aspectran.version>
         <appengine.target.version>1.9.77</appengine.target.version>
-        <slf4j.version>1.7.29</slf4j.version>
+        <slf4j.version>1.7.30</slf4j.version>
         <logback.version>1.2.3</logback.version>
     </properties>
     <build>
@@ -35,15 +30,18 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <fork>true</fork>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <compilerVersion>${java.version}</compilerVersion>
+                    <compilerArgs>
+                        <arg>-Xlint:-try,-path,-options</arg>
+                    </compilerArgs>
                     <debug>true</debug>
+                    <fork>true</fork>
+                    <parameters>true</parameters>
                     <optimize>true</optimize>
                     <showDeprecation>true</showDeprecation>
                     <showWarnings>true</showWarnings>
-                    <compilerArgs>
-                        <arg>-Xlint:-try,-path,-options</arg>
-                        <arg>-parameters</arg>
-                    </compilerArgs>
                     <meminitial>256m</meminitial>
                     <maxmem>1024m</maxmem>
                     <excludes>
