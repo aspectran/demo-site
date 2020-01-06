@@ -44,7 +44,7 @@
         </param-value>
     </context-param>
     <listener>
-        <listener-class>com.aspectran.web.startup.listener.AspectranServiceListener</listener-class>
+        <listener-class>com.aspectran.web.startup.listener.WebServiceListener</listener-class>
     </listener>
     <filter>
         <filter-name>web-activity-filter</filter-name>
