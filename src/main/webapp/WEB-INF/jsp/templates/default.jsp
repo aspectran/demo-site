@@ -9,7 +9,7 @@
     <title>${empty page.title ? "Aspectran Demo Site" : page.title}</title>
     <meta name="description" content="${empty page.description ? "Welcome to Aspectran Demo" : page.description}" />
     <link rel="stylesheet" type="text/css" href="https://aspectran.com/assets/css/styles_aspectran.css" />
-    <link href="http://fonts.googleapis.com/css?family=Raleway:500,500i,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:500,500i,700" rel="stylesheet">
     <script src="https://aspectran.com/assets/js/modernizr-custom.js"></script>
     <script src="https://aspectran.com/assets/js/jquery.js"></script>
     <script src="https://aspectran.com/assets/js/fastclick.js"></script>
