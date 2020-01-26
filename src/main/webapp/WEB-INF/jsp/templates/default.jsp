@@ -77,6 +77,7 @@
                             <li><a href="/examples/hello-world">Hello World</a></li>
                             <li><a href="/examples/gs-rest-service/">RESTful Web Service</a></li>
                             <li><a href="/examples/file-upload/">File Upload</a></li>
+                            <li><a href="https://jpetstore.aspectran.com">JPetStore Demo</a></li>
                         </ul>
                     </li>
                     <li>
@@ -135,13 +136,15 @@
                 </div>
             </div>
         </div>
-        <div class="grid-container breadcrumbs-bar ${page.style}">
-            <nav role="navigation" aria-label="You are here:">
-                <ul class="breadcrumbs" itemprop="breadcrumb">
-                    <li><a href="https://aspectran.com/">Aspectran</a></li>
-                    <li><a href="/">Demo</a></li>
-                </ul>
-            </nav>
+        <div class="grid-container grid-x breadcrumbs-bar ${page.style}">
+            <div class="cell">
+                <nav role="navigation" aria-label="You are here:">
+                    <ul class="breadcrumbs" itemprop="breadcrumb">
+                        <li><a href="https://aspectran.com/">Aspectran</a></li>
+                        <li><a href="/">Demo</a></li>
+                    </ul>
+                </nav>
+            </div>
         </div>
     </div>
     <div class="grid-container ${page.style}">
