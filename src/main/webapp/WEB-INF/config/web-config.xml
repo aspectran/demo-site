@@ -82,7 +82,7 @@
         </advice>
         <exception>
             <thrown type="com.aspectran.web.support.cors.CorsException">
-                <transform type="text">
+                <transform format="text">
                     <template engine="token">
                         @{CORS.HTTP_STATUS_CODE}: @{CORS.HTTP_STATUS_TEXT}
                     </template>
@@ -95,7 +95,7 @@
         <action bean="corsProcessor" method="processPreflightRequest"/>
         <exception>
             <thrown type="com.aspectran.web.support.cors.CorsException">
-                <transform type="text">
+                <transform format="text">
                     <template engine="token">
                         @{CORS.HTTP_STATUS_CODE}: @{CORS.HTTP_STATUS_TEXT}
                     </template>
