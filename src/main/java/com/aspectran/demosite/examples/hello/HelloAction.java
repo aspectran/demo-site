@@ -22,7 +22,7 @@ import com.aspectran.core.util.logging.Logger;
 import com.aspectran.core.util.logging.LoggerFactory;
 
 @Component
-@Bean("helloAction")
+@Bean("helloActivity")
 @Description("Defines a Hello Action Bean that contains the helloWorld() method.")
 public class HelloAction {
 
