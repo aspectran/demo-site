@@ -35,8 +35,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <aspectran.version>6.12.0</aspectran.version>
         <appengine.target.version>1.9.84</appengine.target.version>
-        <slf4j.version>1.7.30</slf4j.version>
-        <logback.version>1.2.5</logback.version>
+        <slf4j.version>1.7.32</slf4j.version>
+        <logback.version>1.2.6</logback.version>
     </properties>
     <repositories>
         <repository>
@@ -96,7 +96,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.1.2</version>
+                <version>3.2.0</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
