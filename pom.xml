@@ -36,7 +36,7 @@
         <aspectran.version>6.12.0</aspectran.version>
         <appengine.target.version>1.9.84</appengine.target.version>
         <slf4j.version>1.7.32</slf4j.version>
-        <logback.version>1.2.8</logback.version>
+        <logback.version>1.2.10</logback.version>
     </properties>
     <repositories>
         <repository>
