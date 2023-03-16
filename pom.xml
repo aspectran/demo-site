@@ -36,7 +36,7 @@
         <aspectran.version>6.14.0</aspectran.version>
         <appengine.target.version>1.9.84</appengine.target.version>
         <slf4j.version>2.0.6</slf4j.version>
-        <logback.version>1.4.5</logback.version>
+        <logback.version>1.4.6</logback.version>
     </properties>
     <repositories>
         <repository>
@@ -55,7 +55,7 @@
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.10.1</version>
+                <version>3.11.0</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
