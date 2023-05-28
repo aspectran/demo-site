@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE aspectran PUBLIC "-//ASPECTRAN//DTD Aspectran 7.0//EN"
+        "http://aspectran.github.io/dtd/aspectran-7.dtd">
+<aspectran>
+
+    <description>
+        This is the first configuration file that contains common settings.
+    </description>
+
+    <append resource="shell/shell-config.xml"/>
+    <append resource="web/web-config.xml"/>
+
+</aspectran>

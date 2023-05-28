@@ -1,5 +1,6 @@
 ![aspectran](https://aspectran.com/images/header_aspectran.png)
 
-# Aspectran Demo Site on GAE
+# Demo Site for Servlet-Based Aspectran
 
-Aspectran Demo Site deployed on Google App Engine.
+This is a web application created to guide you through the classic way
+of building web applications with Aspectran driven by the servlet.

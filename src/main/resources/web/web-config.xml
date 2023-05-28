@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE aspectran PUBLIC "-//ASPECTRAN//DTD Aspectran 7.0//EN"
+        "http://aspectran.github.io/dtd/aspectran-7.dtd">
+<aspectran>
+
+    <description>
+        An Aspectran configuration for the Web Environment.
+        Note that names of translets that match the request URI always start with a forward slash (/).
+    </description>
+
+    <description>
+        This is the first configuration file that contains common settings.
+    </description>
+
+    <bean id="messageSource" class="com.aspectran.core.support.i18n.message.ResourceBundleMessageSource">
+        <description>
+            Defines a bean for multilingual processing.
+        </description>
+        <properties>
+            <item name="basename">locale.messages</item>
+        </properties>
+    </bean>
+
+    <bean id="localeResolver" class="com.aspectran.core.support.i18n.locale.SessionLocaleResolver">
+        <description>
+            Use the session to determine the locale.
+        </description>
+        <properties>
+            <item name="defaultLocale" value="en" />
+        </properties>
+    </bean>
+
+    <bean id="localeChangeInterceptor" class="com.aspectran.core.support.i18n.locale.LocaleChangeInterceptor">
+        <description>
+            Defines an interceptor bean for changing the locale.
+        </description>
+    </bean>
+
+    <bean id="jspViewDispatcher" class="com.aspectran.web.support.view.JspViewDispatcher">
+        <description>
+            Register a JSP View Dispatcher.
+        </description>
+        <properties>
+            <item name="prefix">/WEB-INF/jsp/</item>
+            <item name="suffix">.jsp</item>
+        </properties>
+    </bean>
+
+    <aspect id="webTransletSettings">
+        <description>
+            This aspect is for injecting default settings into translets running in the web environment.
+        </description>
+        <settings>
+            <setting name="characterEncoding" value="utf-8"/>
+            <setting name="viewDispatcher" value="jspViewDispatcher"/>
+            <setting name="format.indentSize" value="2"/>
+            <setting name="format.dateFormat" value="yyyy-MM-dd"/>
+            <setting name="format.dateTimeFormat" value="yyyy-MM-dd HH:mm:ss"/>
+            <setting name="format.nullWritable" value="true"/>
+        </settings>
+    </aspect>
+
+    <bean id="corsProcessor" class="com.aspectran.web.support.cors.DefaultCorsProcessor">
+        <properties>
+            <item name="allowedOrigins" type="set">
+                <value>http://localhost:8080</value>
+                <value>http://localhost</value>
+                <value>http://127.0.0.1</value>
+            </item>
+            <item name="allowedMethods" type="set">
+                <value>GET</value>
+                <value>POST</value>
+                <value>PATCH</value>
+                <value>PUT</value>
+                <value>DELETE</value>
+                <value>HEAD</value>
+                <value>OPTIONS</value>
+            </item>
+            <item name="maxAgeSeconds" value="360" valueType="int"/>
+            <item name="exposedHeaders" value="Location"/>
+        </properties>
+    </bean>
+
+    <aspect id="corsProcessorAspect">
+        <joinpoint>
+            methods: [
+                GET
+                POST
+                PATCH
+                PUT
+                DELETE
+            ]
+            headers: [
+                Origin
+            ]
+            pointcut: {
+                +: /**
+            }
+        </joinpoint>
+        <advice bean="corsProcessor">
+            <before>
+                <invoke method="processActualRequest"/>
+            </before>
+        </advice>
+        <exception>
+            <thrown type="com.aspectran.web.support.cors.CorsException">
+                <transform format="text">
+                    <template engine="token">
+                        @{CORS.HTTP_STATUS_CODE}: @{CORS.HTTP_STATUS_TEXT}
+                    </template>
+                </transform>
+            </thrown>
+        </exception>
+    </aspect>
+
+    <translet name="/**" method="OPTIONS">
+        <action bean="corsProcessor" method="processPreflightRequest"/>
+        <exception>
+            <thrown type="com.aspectran.web.support.cors.CorsException">
+                <transform format="text">
+                    <template engine="token">
+                        @{CORS.HTTP_STATUS_CODE}: @{CORS.HTTP_STATUS_TEXT}
+                    </template>
+                </transform>
+            </thrown>
+        </exception>
+    </translet>
+
+    <append resource="web/home/main.xml"/>
+    <append resource="web/examples/hello-world.xml"/>
+    <append resource="web/examples/gs-rest-service.xml"/>
+    <append resource="web/examples/file-upload.xml"/>
+    <append resource="web/terminal/translet-interpreter.xml"/>
+    <append resource="web/skylark/skylark.xml"/>
+
+</aspectran>
