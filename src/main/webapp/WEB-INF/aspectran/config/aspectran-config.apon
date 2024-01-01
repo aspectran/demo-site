@@ -2,7 +2,7 @@ context: {
     rules: /WEB-INF/aspectran/config/app-context.xml
     encoding: utf-8
     resources: [
-        /WEB-INF/aspectran/lib/ext
+        /WEB-INF/lib/ext
     ]
     scan: [
         com.aspectran.demosite

@@ -22,6 +22,7 @@
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
     <url>https://github.com/aspectran/demo-site.git</url>
+    <inceptionYear>2018</inceptionYear>
     <contributors>
         <contributor>
             <name>Juho Jeong</name>
@@ -33,8 +34,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <aspectran.version>7.3.0</aspectran.version>
-        <slf4j.version>2.0.9</slf4j.version>
+        <aspectran.version>7.5.0-SNAPSHOT</aspectran.version>
+        <slf4j.version>2.0.10</slf4j.version>
         <logback.version>1.4.14</logback.version>
     </properties>
     <repositories>
@@ -74,7 +75,7 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.3.0</version>
                 <configuration>
-                    <outputDirectory>src/main/webapp/WEB-INF/aspectran/lib/ext</outputDirectory>
+                    <outputDirectory>src/main/webapp/WEB-INF/lib/ext</outputDirectory>
                 </configuration>
             </plugin>
             <plugin>
@@ -169,4 +170,46 @@
             <version>1.2.2</version>
         </dependency>
     </dependencies>
+    <profiles>
+        <profile>
+            <id>license</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.mycila</groupId>
+                        <artifactId>license-maven-plugin</artifactId>
+                        <version>4.3</version>
+                        <executions>
+                            <execution>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>format</goal>
+                                </goals>
+                                <configuration>
+                                    <aggregate>true</aggregate>
+                                    <failIfMissing>true</failIfMissing>
+                                    <failIfUnknown>true</failIfUnknown>
+                                    <strictCheck>true</strictCheck>
+                                    <mapping>
+                                        <java>SLASHSTAR_STYLE</java>
+                                    </mapping>
+                                    <properties>
+                                        <copyright-range>${project.inceptionYear}-2024</copyright-range>
+                                    </properties>
+                                    <licenseSets>
+                                        <licenseSet>
+                                            <header>header.txt</header>
+                                            <includes>
+                                                <include>**/*.java</include>
+                                            </includes>
+                                        </licenseSet>
+                                    </licenseSets>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
