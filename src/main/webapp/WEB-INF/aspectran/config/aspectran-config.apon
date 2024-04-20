@@ -10,7 +10,7 @@ context: {
     autoReload: {
         reloadMode: hard
         scanIntervalSeconds: 5
-        enabled: true
+        enabled: false
     }
     profiles: {
         default: [
@@ -19,12 +19,14 @@ context: {
     }
 }
 scheduler: {
-    startDelaySeconds: 10
+    startDelaySeconds: 3
     waitOnShutdown: true
     enabled: false
 }
 web: {
     uriDecoding: utf-8
+    trailingSlashRedirect: true
+    legacyHeadHandling: false
     exposals: {
         +: /**
         -: /assets/**
