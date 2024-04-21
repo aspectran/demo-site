@@ -27,7 +27,7 @@ web: {
     uriDecoding: utf-8
     trailingSlashRedirect: true
     legacyHeadHandling: false
-    exposals: {
+    acceptables: {
         +: /**
         -: /assets/**
         -: /css/**
