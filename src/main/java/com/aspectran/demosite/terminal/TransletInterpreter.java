@@ -27,8 +27,8 @@ import com.aspectran.core.component.bean.annotation.RequestToPost;
 import com.aspectran.core.component.bean.annotation.Transform;
 import com.aspectran.core.component.bean.aware.ActivityContextAware;
 import com.aspectran.core.context.ActivityContext;
-import com.aspectran.core.context.expr.token.Token;
-import com.aspectran.core.context.expr.token.TokenParser;
+import com.aspectran.core.context.asel.token.Token;
+import com.aspectran.core.context.asel.token.TokenParser;
 import com.aspectran.core.context.rule.DescriptionRule;
 import com.aspectran.core.context.rule.ItemRule;
 import com.aspectran.core.context.rule.ItemRuleMap;
@@ -37,9 +37,10 @@ import com.aspectran.core.context.rule.type.FormatType;
 import com.aspectran.core.context.rule.type.MethodType;
 import com.aspectran.core.context.rule.type.TokenType;
 import com.aspectran.utils.StringUtils;
+import com.aspectran.utils.annotation.jsr305.NonNull;
 import com.aspectran.utils.json.JsonWriter;
-import com.aspectran.utils.logging.Logger;
-import com.aspectran.utils.logging.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -98,11 +99,11 @@ public class TransletInterpreter implements ActivityContextAware {
         jsonWriter.writeName("translet");
         jsonWriter.beginObject();
         jsonWriter.writeName("name");
-        jsonWriter.write(transletRule.getName());
+        jsonWriter.writeValue(transletRule.getName());
         if (transletRule.getDescriptionRule() != null) {
             String description = DescriptionRule.render(transletRule.getDescriptionRule(), context.getCurrentActivity());
             jsonWriter.writeName("description");
-            jsonWriter.write(description);
+            jsonWriter.writeValue(description);
         }
         jsonWriter.endObject();
         jsonWriter.writeName("request");
@@ -111,18 +112,18 @@ public class TransletInterpreter implements ActivityContextAware {
             jsonWriter.writeName("parameters");
             jsonWriter.beginObject();
             jsonWriter.writeName("items");
-            jsonWriter.write(toListForItems(parameterItemRuleMap.values()));
+            jsonWriter.writeValue(toListForItems(parameterItemRuleMap.values()));
             jsonWriter.writeName("tokens");
-            jsonWriter.write(toListForTokens(parameterItemRuleMap.values()));
+            jsonWriter.writeValue(toListForTokens(parameterItemRuleMap.values()));
             jsonWriter.endObject();
         }
         if (attributeItemRuleMap != null) {
             jsonWriter.writeName("attributes");
             jsonWriter.beginObject();
             jsonWriter.writeName("items");
-            jsonWriter.write(toListForItems(attributeItemRuleMap.values()));
+            jsonWriter.writeValue(toListForItems(attributeItemRuleMap.values()));
             jsonWriter.writeName("tokens");
-            jsonWriter.write(toListForTokens(attributeItemRuleMap.values()));
+            jsonWriter.writeValue(toListForTokens(attributeItemRuleMap.values()));
             jsonWriter.endObject();
         }
         jsonWriter.endObject();
@@ -137,7 +138,7 @@ public class TransletInterpreter implements ActivityContextAware {
     }
 
     @RequestToPost("/exec/@{_translet_}")
-    public void execute(Translet translet) {
+    public void execute(@NonNull Translet translet) {
         String transletName = translet.getAttribute("_translet_");
         if (StringUtils.isEmpty(transletName)) {
             return;
@@ -146,7 +147,7 @@ public class TransletInterpreter implements ActivityContextAware {
         try {
             performActivity(transletName);
         } catch (ActivityException e) {
-            logger.error("Failed to execute translet: " + transletName, e);
+            logger.error("Failed to execute translet: {}", transletName, e);
         }
     }
 
@@ -164,7 +165,8 @@ public class TransletInterpreter implements ActivityContextAware {
         activity.perform();
     }
 
-    private List<Map<String, Object>> toListForTokens(Collection<ItemRule> itemRules) {
+    @NonNull
+    private List<Map<String, Object>> toListForTokens(@NonNull Collection<ItemRule> itemRules) {
         List<Map<String, Object>> list = new ArrayList<>();
         Map<Token, Set<ItemRule>> inputTokens = new LinkedHashMap<>();
         for (ItemRule itemRule : itemRules) {
