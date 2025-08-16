@@ -19,7 +19,6 @@ import com.aspectran.core.activity.ActivityException;
 import com.aspectran.core.activity.InstantActivity;
 import com.aspectran.core.activity.Translet;
 import com.aspectran.core.activity.TransletNotFoundException;
-import com.aspectran.core.component.bean.annotation.AvoidAdvice;
 import com.aspectran.core.component.bean.annotation.Bean;
 import com.aspectran.core.component.bean.annotation.Component;
 import com.aspectran.core.component.bean.annotation.RequestToGet;
@@ -60,7 +59,6 @@ public class TransletInterpreter implements ActivityContextAware {
     private ActivityContext context;
 
     @Override
-    @AvoidAdvice
     public void setActivityContext(ActivityContext context) {
         this.context = context;
     }
