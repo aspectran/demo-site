@@ -26,10 +26,10 @@ import com.aspectran.core.component.bean.annotation.Transform;
 import com.aspectran.core.context.rule.type.FormatType;
 import com.aspectran.utils.FilenameUtils;
 import com.aspectran.utils.StringUtils;
-import com.aspectran.utils.logging.Logger;
-import com.aspectran.utils.logging.LoggerFactory;
 import com.aspectran.web.support.http.HttpStatus;
 import com.aspectran.web.support.http.HttpStatusSetter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -99,7 +99,7 @@ public class SimpleFileUploadActivity {
             uploadedFile.setKey(key);
             uploadedFile.setFileName(fileParameter.getFileName());
             uploadedFile.setFileSize(fileParameter.getFileSize());
-            uploadedFile.setHumanFileSize(StringUtils.convertToHumanFriendlyByteSize(fileParameter.getFileSize()));
+            uploadedFile.setHumanFileSize(StringUtils.toHumanFriendlyByteSize(fileParameter.getFileSize()));
             uploadedFile.setFileType((fileParameter.getContentType()));
             uploadedFile.setUrl("/examples/file-upload/files/" + key);
             uploadedFile.setBytes(fileParameter.getBytes());

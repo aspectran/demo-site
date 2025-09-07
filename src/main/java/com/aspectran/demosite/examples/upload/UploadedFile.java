@@ -20,6 +20,7 @@ import com.aspectran.utils.annotation.NonSerializable;
 import com.aspectran.utils.json.JsonWriter;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.UUID;
 
 /**
@@ -118,7 +119,7 @@ public class UploadedFile {
         uploadedFile.setFileType("jpg");
 
         try {
-            System.out.println(new JsonWriter().write(uploadedFile));
+            System.out.println(new JsonWriter(new StringWriter()).value(uploadedFile));
         } catch (IOException e) {
             e.printStackTrace();
         }

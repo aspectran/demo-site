@@ -256,7 +256,7 @@ public class ByteStreamAudioPlayer implements AudioPlayer {
     /**
      * A transformer that encodes bytes into different types of data.
      */
-    interface Transformer {
+    public interface Transformer {
 
         byte[] transform(byte[] bytes);
 

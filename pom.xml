@@ -30,11 +30,9 @@
         </contributor>
     </contributors>
     <properties>
-        <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <aspectran.version>8.5.3</aspectran.version>
+        <maven.compiler.release>21</maven.compiler.release>
+        <aspectran.version>9.0.0-SNAPSHOT</aspectran.version>
     </properties>
     <repositories>
         <repository>
@@ -52,7 +50,7 @@
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
+                <version>3.14.0</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
@@ -69,14 +67,14 @@
             </plugin>
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.4.0</version>
+                <version>3.4.2</version>
                 <configuration>
                     <outputDirectory>src/main/webapp/WEB-INF/lib/ext</outputDirectory>
                 </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.6.1</version>
+                <version>3.8.1</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -93,7 +91,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>3.3.2</version>
+                <version>3.5.0</version>
                 <configuration>
                     <excludeDefaultDirectories>true</excludeDefaultDirectories>
                     <filesets>
@@ -139,7 +137,7 @@
         <dependency>
             <groupId>jakarta.servlet.jsp.jstl</groupId>
             <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
-            <version>3.0.0</version>
+            <version>3.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.mortbay.jasper</groupId>
