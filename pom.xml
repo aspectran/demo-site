@@ -82,8 +82,9 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <excludeTypes>pom</excludeTypes>
                             <outputDirectory>src/main/webapp/WEB-INF/lib</outputDirectory>
+                            <includeScope>runtime</includeScope>
+                            <excludeTypes>pom</excludeTypes>
                             <overWriteIfNewer>true</overWriteIfNewer>
                         </configuration>
                     </execution>
