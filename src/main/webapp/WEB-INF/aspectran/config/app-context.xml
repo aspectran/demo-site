@@ -7,7 +7,6 @@
         This is the first configuration file that contains common settings.
     </description>
 
-    <append resource="shell/shell-config.xml"/>
     <append resource="web/web-config.xml"/>
 
 </aspectran>
