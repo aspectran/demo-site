@@ -14,7 +14,7 @@ This project serves as a practical example for developers looking to understand 
 ## Prerequisites
 
 *   Java Development Kit (JDK) 21 or later.
-*   Apache Maven 3.6.3 or later.
+*   Apache Maven 3.9.4 or later.
 *   A Jakarta EE 10 compatible servlet container (e.g., Tomcat 10.1+, Jetty 12+).
 
 ## How to Build
