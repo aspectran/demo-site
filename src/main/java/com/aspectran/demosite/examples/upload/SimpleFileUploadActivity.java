@@ -29,6 +29,8 @@ import com.aspectran.utils.FilenameUtils;
 import com.aspectran.utils.StringUtils;
 import com.aspectran.web.support.http.HttpStatus;
 import com.aspectran.web.support.http.HttpStatusSetter;
+import com.aspectran.web.support.util.WebUtils;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +53,7 @@ public class SimpleFileUploadActivity {
 
     private final Map<String, UploadedFile> uploadedFiles = new LinkedHashMap<>();
 
-    private int maxFiles = 30;
+    private int maxFiles = 50;
 
     public void setMaxFiles(int maxFiles) {
         this.maxFiles = maxFiles;
@@ -64,7 +66,9 @@ public class SimpleFileUploadActivity {
     private void addUploadedFile(UploadedFile uploadedFile) {
         synchronized (uploadedFiles) {
             uploadedFiles.put(uploadedFile.getKey(), uploadedFile);
-            logger.debug("Uploaded File " + uploadedFile);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Uploaded File {}", uploadedFile);
+            }
 
             if (uploadedFiles.size() > this.maxFiles) {
                 Iterator<String> it = uploadedFiles.keySet().iterator();
@@ -72,7 +76,9 @@ public class SimpleFileUploadActivity {
                 while (cnt-- > 0) {
                     if (it.hasNext()) {
                         UploadedFile removedFile = uploadedFiles.remove(it.next());
-                        logger.debug("Remove Old File " + removedFile);
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("Removed old file {}", removedFile);
+                        }
                     }
                 }
             }
@@ -88,7 +94,7 @@ public class SimpleFileUploadActivity {
     @RequestToPost("/files")
     @Transform(FormatType.JSON)
     @Action("files")
-    public List<UploadedFile> upload(Translet translet) throws IOException {
+    public List<UploadedFile> upload(@NonNull Translet translet) throws IOException {
         FileParameter fileParameter = translet.getFileParameter("file");
         if (fileParameter != null) {
             String key = UUID.randomUUID().toString();
@@ -102,7 +108,6 @@ public class SimpleFileUploadActivity {
             uploadedFile.setFileSize(fileParameter.getFileSize());
             uploadedFile.setHumanFileSize(DataSizeUtils.toHumanFriendlyByteSize(fileParameter.getFileSize()));
             uploadedFile.setFileType((fileParameter.getContentType()));
-            uploadedFile.setUrl("/examples/file-upload/files/" + key);
             uploadedFile.setBytes(fileParameter.getBytes());
 
             addUploadedFile(uploadedFile);
@@ -116,20 +121,18 @@ public class SimpleFileUploadActivity {
     }
 
     @RequestToGet("/files/${key}")
-    public void serve(Translet translet) throws IOException {
+    public void serve(@NonNull Translet translet) throws IOException {
         String key = translet.getParameter("key");
         UploadedFile uploadedFile = uploadedFiles.get(key);
         if (uploadedFile != null) {
-            translet.getResponseAdapter().setContentType(uploadedFile.getFileType());
-            translet.getResponseAdapter().setHeader("Content-disposition", "attachment; filename=\"" + uploadedFile.getFileName() + "\"");
-            translet.getResponseAdapter().getOutputStream().write(uploadedFile.getBytes());
+            WebUtils.serveFile(translet, uploadedFile.getFileName(), uploadedFile.getFileType(), uploadedFile.getBytes());
         } else {
             HttpStatusSetter.setStatus(HttpStatus.NOT_FOUND, translet);
         }
     }
 
     @RequestToDelete("/files/${key}")
-    public void delete(Translet translet) {
+    public void delete(@NonNull Translet translet) {
         String key = translet.getParameter("key");
         UploadedFile removedFile = removeUploadedFile(key);
         if (removedFile == null) {
